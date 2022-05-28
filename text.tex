@@ -1,0 +1,77 @@
+\documentclass[9pt, letterpaper, twocolumn]{article}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\graphicspath{ {./} }
+% Эта строка — комментарий, она не будет показана в выходном файле
+% \usepackage{ucs}
+\usepackage[utf8x]{inputenc} % Включаем поддержку UTF8
+\usepackage[russian]{babel}  % Включаем пакет для поддержки русского языка
+\usepackage{pgfplots}
+\title{\LaTeX}
+\date{February 2014}
+\author{Zzzorgo \thanks{thanks to bro}}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+\begin{abstract}
+  So fa r while specifying the image file name in the command we have omitted file extensions. However, that is not necessary, though it is often useful. If the file extension is omitted, LaTeX will search for any supported image format in that directory, and will search for various extensions in the default order (which can be modified).
+
+  This is useful in switching between development and production environments. In a development environment (when the article/report/book is still in progress), it is desirable to use low-resolution versions of images (typically in .png format) for fast compilation of the preview. In the production environment (when the final version of the article/report/book is produced), it is desirable to include the high-resolution version of the images.
+\end{abstract}
+\listoffigures
+\tableofcontents
+\end{titlepage}
+
+
+\section{Введение}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin quam nunc, ac ultricies urna pellentesque ut. Maecenas id consequat lectus. Ut elementum erat eu blandit ullamcorper. Cras ut vestibulum mauris. Suspendisse rutrum efficitur velit at scelerisque. Vivamus cursus pulvinar dolor, ut consectetur tortor. Donec vitae mi libero. Nam in tortor vehicula leo laoreet vulputate. Donec quis consectetur turpis. Fusce at nunc accumsan, imperdiet magna vitae, elementum sapien. Integer feugiat vestibulum tristique. Curabitur feugiat ut sapien at condimentum. Donec condimentum ex mi, non scelerisque velit tincidunt sed. Nunc blandit commodo magna, a vehicula odio volutpat sit amet. In et consequat erat.
+
+Maecenas in nisl dignissim, suscipit tellus efficitur, condimentum tortor. Vivamus bibendum faucibus libero, quis porttitor orci sollicitudin id. Integer at sapien iaculis, tincidunt risus non, eleifend nulla. Nam et diam eleifend, varius est vel, iaculis sapien. Phasellus faucibus, augue quis varius volutpat, lectus lectus congue sem, eu venenatis risus lorem nec lorem. Donec blandit lorem non turpis faucibus, ac faucibus mauris ultricies. Donec vehicula tristique turpis nec pellentesque. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec tempor nisi in elit dapibus, vel mattis diam dapibus. Donec id porta lorem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin tristique velit id purus hendrerit, vel venenatis massa tristique. Aliquam sed nibh fringilla, pretium erat vehicula, iaculis augue. Aenean leo massa, iaculis et tempus quis, molestie sed ipsum. Vestibulum cursus tincidunt suscipit. Nunc vehicula, quam sit amet semper interdum, mauris magna auctor felis, a placerat magna mi sed ex.
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}
+  \begin{axis}
+  \addplot3[
+      surf,
+  ]
+  {-x^3-y^3)*x};
+  \end{axis}
+  \end{tikzpicture}
+  \caption{some plot}
+  \label{fig:mesh2}
+\end{figure}
+
+Praesent imperdiet laoreet tellus at dapibus. Cras sollicitudin nisl malesuada blandit luctus. Donec porta ante ac est dictum, eget dignissim neque efficitur. Sed purus leo, blandit vitae suscipit vitae, suscipit vel enim. Proin ac nibh at augue rhoncus posuere nec eu odio. Fusce tempus luctus eros non consectetur. Mauris iaculis facilisis justo eget malesuada. Mauris accumsan dui sed lacus gravida, ut egestas ex bibendum. Quisque non suscipit felis. Morbi eu tellus at nulla bibendum dapibus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc at erat sit amet magna consectetur molestie. Aenean consequat mollis ipsum, nec feugiat urna mattis ac.
+
+Fusce pretium quam ut erat fringilla, nec dignissim ante interdum. Nullam sit amet imperdiet mi, lacinia hendrerit massa. Duis egestas malesuada risus, sit amet euismod magna sagittis in. Morbi lacinia fringilla arcu. Donec tincidunt posuere lectus, sed iaculis dolor. Nam in luctus sem. Donec finibus facilisis justo, eu lobortis dolor aliquet non. Maecenas eleifend mauris felis, ac cursus lectus elementum eu.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{0VJVtV47xpk}
+  \caption{a nice plot}
+  \label{fig:mesh1}
+\end{figure}
+
+\subsection{ты лох}
+Maecenas ut sollicitudin metus. Donec fig. \ref{fig:mesh1} eleifend, enim bibendum tincidunt auctor, dui velit luctus ipsum, eget convallis massa metus ut arcu. In convallis egestas nunc at condimentum. Proin auctor convallis elementum. Morbi sodales eros eget diam pharetra, tempor tempus erat vestibulum. Nullam in nulla vitae risus pellentesque accumsan. Nulla nulla eros, aliquet sit amet lacus at, ultrices porttitor nunc. Donec sit amet ipsum feugiat, mollis nisl ac, fermentum nisl. Duis nulla est, semper ut rutrum at, accumsan id dolor. Vestibulum sed malesuada enim. Aenean venenatis, quam id imperdiet bibendum, lorem lectus hendrerit turpis, vitae sollicitudin leo ipsum ac leo. Ut vitae laoreet quam.
+\paragraph{Лол}
+Integer turpis diam, euismod tincidunt est sed, vestibulum tempus ex. Mauris id libero eget tellus congue ultrices.
+\subparagraph{кек} Vestibulum ut mattis erat, in ornare dui. Cras a justo nunc. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In laoreet elementum turpis, ac lacinia tortor gravida eu. Mauris non eros diam. Phasellus iaculis euismod tincidunt. Morbi at purus nec purus vestibulum luctus a nec enim. Maecenas pharetra porta lorem eget facilisis. Maecenas semper tellus placerat, congue felis vitae, congue nisl. Mauris lorem nulla, gravida at dui vitae, iaculis efficitur libero. Proin iaculis, dui in pulvinar fermentum, turpis odio consequat velit, dignissim viverra quam odio vel orci. Ut ac dui id risus iaculis fringilla. Aenean vitae libero non tellus interdum pellentesque. Mauris lectus mauris, rhoncus vitae congue ac, placerat et tortor.
+
+Phasellus tristique libero scelerisque, elementum massa et, lacinia tortor. Nullam blandit dui vitae quam pellentesque blandit. Nullam et est maximus, fermentum nunc vitae, blandit nibh. Aliquam aliquam leo tortor, eu eleifend risus hendrerit vehicula. Maecenas nec sodales justo. Nam eleifend turpis nec imperdiet dictum. Sed non tortor ac lorem iaculis malesuada eu et arcu. Pellentesque id aliquet quam.
+\subsubsection{subsubsection}
+Aenean eu nisi dignissim, tincidunt mi a, mattis elit. Vestibulum tincidunt viverra aliquam. Ut laoreet, eros et interdum interdum, eros elit bibendum quam, id convallis lectus magna eget diam. Maecenas venenatis orci in sapien lacinia, vehicula egestas nisi interdum. Quisque rhoncus velit massa, eget gravida ipsum commodo vitae. Nunc vulputate, risus id maximus pulvinar, mi ligula mattis dui, vel vehicula massa leo suscipit nisi. In ullamcorper ipsum et quam aliquet, at commodo tellus dictum. Nam lacinia congue urna sed molestie. Pellentesque vestibulum et metus eu hendrerit. Vivamus arcu mi, rhoncus eget malesuada ut, placerat sed sem. Nunc vel neque vitae quam vestibulum commodo.
+
+Suspendisse pharetra malesuada tellus in vestibulum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum egestas lectus et magna porttitor, a pulvinar lorem auctor. Nam fringilla est vitae massa posuere condimentum. Fusce auctor maximus ipsum, nec gravida risus facilisis ut. Suspendisse ullamcorper arcu dolor, in sollicitudin nulla porta sit amet. Nullam consectetur odio at mi sollicitudin ornare. Nullam id dui iaculis, euismod sapien rhoncus, scelerisque lectus. Nunc augue quam, blandit id semper id, feugiat sed erat. Donec blandit pulvinar purus, quis mattis est elementum at. Quisque gravida ligula vitae pellentesque egestas.
+
+Donec vitae justo sed sapien aliquam vestibulum nec id velit. Nunc iaculis sapien nibh, nec ornare ante malesuada eu. Duis vel neque vulputate, porta enim dictum, mollis nisl. Sed sem dolor, viverra a condimentum a, viverra quis metus. Nunc ac orci ut mauris hendrerit consequat quis vel lacus. Donec a feugiat diam. Praesent consectetur lectus metus, ut rutrum ligula venenatis at. Sed erat ligula, mattis ut orci non, bibendum congue felis. Sed aliquet consectetur sapien, sit amet euismod massa pulvinar et.
+
+Nunc eget nisi lacus. Mauris finibus suscipit ante ac finibus. Curabitur libero libero, pulvinar ut malesuada vitae, malesuada non metus. Sed lobortis id est eu pretium. Integer neque libero, pulvinar id vestibulum vel, vulputate eget erat. Mauris metus lectus, mollis nec suscipit quis, consequat nec orci. Praesent ut interdum mi. Mauris hendrerit urna non maximus suscipit.
+
+Integer faucibus ligula tempor elit faucibus pretium. Nullam justo felis, finibus consectetur auctor nec, volutpat a dui. Suspendisse vitae neque eget libero maximus vulputate. Donec non ipsum porta, bibendum libero at, laoreet tortor. Integer sollicitudin euismod ante, in tincidunt ante finibus et. Vivamus ultrices porta augue, dictum condimentum ante aliquam non. In et viverra justo. Nulla fringilla eget dolor eget tincidunt. Quisque sit amet lacus ac enim pulvinar egestas eu sed metus. Phasellus vel felis magna. Praesent placerat tellus sed lectus auctor, porttitor ullamcorper ex efficitur. Phasellus auctor dolor at eros consequat, eget gravida nunc maximus. Nullam tempor laoreet ornare.
+
+\end{document}

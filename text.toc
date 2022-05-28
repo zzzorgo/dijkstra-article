@@ -1,0 +1,6 @@
+\babel@toc {russian}{}\relax 
+\contentsline {section}{\numberline {1}\IeC {\CYRV }\IeC {\cyrv }\IeC {\cyre }\IeC {\cyrd }\IeC {\cyre }\IeC {\cyrn }\IeC {\cyri }\IeC {\cyre }}{1}{}%
+\contentsline {subsection}{\numberline {1.1}\IeC {\cyrt }\IeC {\cyrery } \IeC {\cyrl }\IeC {\cyro }\IeC {\cyrh }}{1}{}%
+\contentsline {paragraph}{\IeC {\CYRL }\IeC {\cyro }\IeC {\cyrl }}{2}{}%
+\contentsline {subparagraph}{\IeC {\cyrk }\IeC {\cyre }\IeC {\cyrk }}{2}{}%
+\contentsline {subsubsection}{\numberline {1.1.1}subsubsection}{2}{}%
