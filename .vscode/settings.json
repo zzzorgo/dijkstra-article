@@ -1,0 +1,4 @@
+{
+    "latex-workshop.latex.outDir": "./output",
+    "latex-workshop.latex.autoBuild.interval": 10000,
+}

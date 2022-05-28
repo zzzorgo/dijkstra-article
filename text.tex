@@ -7,6 +7,7 @@
 \usepackage[utf8x]{inputenc} % Включаем поддержку UTF8
 \usepackage[russian]{babel}  % Включаем пакет для поддержки русского языка
 \usepackage{pgfplots}
+\usepackage{tikz}
 \title{\LaTeX}
 \date{February 2014}
 \author{Zzzorgo \thanks{thanks to bro}}
@@ -28,6 +29,20 @@
 \section{Введение}
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin quam nunc, ac ultricies urna pellentesque ut. Maecenas id consequat lectus. Ut elementum erat eu blandit ullamcorper. Cras ut vestibulum mauris. Suspendisse rutrum efficitur velit at scelerisque. Vivamus cursus pulvinar dolor, ut consectetur tortor. Donec vitae mi libero. Nam in tortor vehicula leo laoreet vulputate. Donec quis consectetur turpis. Fusce at nunc accumsan, imperdiet magna vitae, elementum sapien. Integer feugiat vestibulum tristique. Curabitur feugiat ut sapien at condimentum. Donec condimentum ex mi, non scelerisque velit tincidunt sed. Nunc blandit commodo magna, a vehicula odio volutpat sit amet. In et consequat erat.
+
+\begin{tikzpicture}[node distance={15mm}, thick, main/.style = {draw, circle}]
+  \node[main] (1) {$x_1$};
+  \node[main] (2) [above right of=1] {$x_2$};
+  \node[main] (3) [below right of=1] {$x_3$};
+  \node[main] (4) [above right of=3] {$x_4$};
+  \node[main] (5) [above right of=4] {$x_5$};
+  \node[main] (6) [below right of=4] {$x_6$};
+  \draw (2) -- (4);
+  \draw[->] (1) -- (2);
+  \draw (1) to [out=135,in=90,looseness=1.5] (5);
+  \draw (1) to [out=180,in=270,looseness=5] (1);
+  \draw[->] (6) -- node[midway, above right, sloped, pos=1] {+1} (4);
+\end{tikzpicture}
 
 Maecenas in nisl dignissim, suscipit tellus efficitur, condimentum tortor. Vivamus bibendum faucibus libero, quis porttitor orci sollicitudin id. Integer at sapien iaculis, tincidunt risus non, eleifend nulla. Nam et diam eleifend, varius est vel, iaculis sapien. Phasellus faucibus, augue quis varius volutpat, lectus lectus congue sem, eu venenatis risus lorem nec lorem. Donec blandit lorem non turpis faucibus, ac faucibus mauris ultricies. Donec vehicula tristique turpis nec pellentesque. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec tempor nisi in elit dapibus, vel mattis diam dapibus. Donec id porta lorem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin tristique velit id purus hendrerit, vel venenatis massa tristique. Aliquam sed nibh fringilla, pretium erat vehicula, iaculis augue. Aenean leo massa, iaculis et tempus quis, molestie sed ipsum. Vestibulum cursus tincidunt suscipit. Nunc vehicula, quam sit amet semper interdum, mauris magna auctor felis, a placerat magna mi sed ex.
 
