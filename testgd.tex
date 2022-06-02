@@ -1,0 +1,131 @@
+\documentclass[9pt, letterpaper, twocolumn]{article}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\graphicspath{ {./} }
+% \usepackage[utf8x]{inputenc} % Включаем поддержку UTF8
+\usepackage[russian]{babel}  % Включаем пакет для поддержки русского языка
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{lipsum}
+
+\newfontfamily\myfont[Scale=1.00]{Arial}
+\setmainfont{Arial}
+
+\newfontfamily\cyrillicfont{Arial}[Script=Cyrillic]
+\newfontfamily\cyrillicfontsf{Arial}[Script=Cyrillic]
+
+\setmainlanguage{russian}
+
+\usepackage{pgfplots}
+\usepackage{tikz}
+\definecolor{accentColor}{cmyk}{0,0.78,0.79,0}
+% \definecolor{secondaryAccentColor}{cmyk}{0,0,0,0.3}
+\definecolor{secondaryAccentColor}{cmyk}{0.66,0.28,0,0}
+\definecolor{mainColor}{cmyk}{0,0,0,0.7}
+\definecolor{textColor}{named}{black}
+\definecolor{backgroundColor}{cmyk}{0,0,0,0}
+
+\usepackage{titlesec}
+\titleformat{\section}
+    {\myfont\fontseries{b}\LARGE\color{textColor}}
+    {\thesection.}{1em}{}
+\titleformat{\subsection}
+    {\myfont\large\color{accentColor}}
+    {\thesubsection.}{0.5em}{}
+
+\usetikzlibrary{arrows.meta,decorations.pathmorphing,backgrounds,positioning,fit,petri,graphs,graphdrawing}
+\usegdlibrary {trees,force,layered}
+
+\makeatletter
+\newcommand{\globalcolor}[1]{
+  \color{#1}\global\let\default@color\current@color
+}
+\makeatother
+
+\AtBeginDocument{\globalcolor{textColor}}
+
+\title{\LaTeX}
+\date{February 2014}
+\author{Zzzorgo \thanks{thanks to bro}}
+
+
+
+
+
+
+
+
+\begin{document}
+\pagecolor{backgroundColor}
+
+\begin{titlepage}
+    \maketitle
+    \begin{abstract}
+        Какая-то статья
+      \end{abstract}
+    \listoffigures
+    \tableofcontents
+\end{titlepage}
+
+\section{Введение}
+\subsection{Точное введение}
+
+% \tikz \graph [binary tree layout, level distance=5mm] {
+% 4 -- {
+%     3 -- 0 -- 1[second],
+%     10 -- {
+%     8 -- {
+%         6 -- {5,7},
+%         9
+% } } }
+% };
+
+% \tikz [grow'=up, binary tree layout, nodes={circle,draw}]
+% \node {1}
+% child { node {2}
+%     child { node {3} }
+%     child { node {4}
+%     child { node {5} }
+%     child { node {6} }
+%     }
+% }
+% child { node {7}
+%     child { node {8}
+%     child[missing]
+%     child { node {9} }
+%     }
+% };
+
+This text uses {\myfont a different} font typeface привет
+\renewcommand{\abstractname}{}
+\twocolumn[
+  \begin{@twocolumnfalse}
+    \section{Second section}
+    \begin{abstract}
+        \Large{\myfont{\color{accentColor}{Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut
+        purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis.
+        Curabitur dictum gravida mauris. Nam arcu libero, nonummy
+        eget, consectetuer id, vulputate a, magna. Donec vehicula
+        augue eu neque. Pellentesque habitant morbi tristique senectus
+        et netus et malesuada fames ac turpis egestas. Mauris ut leo.
+        Cras viverra metus rhoncus sem.\vspace{1cm}}}}
+    \end{abstract}
+  \end{@twocolumnfalse}
+]
+
+\lipsum[1-12]
+
+\tikz \graph
+[
+    spring layout,
+    nodes={circle,draw,ultra thick,backgroundColor,fill=secondaryAccentColor,minimum size=7mm,text=backgroundColor},
+    node distance=1.9cm,
+    visited/.style={fill=accentColor,text=backgroundColor},
+    edges={shorten <=1pt,>={Stealth[round]},semithick,mainColor}
+]
+{
+    abc [visited] -- { b, c, d, e -> {f, g, я} };
+    я -- abc;
+};
+
+\end{document}

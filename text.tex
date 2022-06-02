@@ -8,6 +8,8 @@
 \usepackage[russian]{babel}  % Включаем пакет для поддержки русского языка
 \usepackage{pgfplots}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.pathmorphing,backgrounds,positioning,fit,petri,graphs}
+
 \title{\LaTeX}
 \date{February 2014}
 \author{Zzzorgo \thanks{thanks to bro}}
@@ -24,7 +26,6 @@
 \listoffigures
 \tableofcontents
 \end{titlepage}
-
 
 \section{Введение}
 
@@ -43,6 +44,99 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin quam
   \draw (1) to [out=180,in=270,looseness=5] (1);
   \draw[->] (6) -- node[midway, above right, sloped, pos=1] {+1} (4);
 \end{tikzpicture}
+
+\begin{tikzpicture}
+  [
+    place/.style={circle,draw=blue!50,fill=blue!20,thick,inner sep=0pt,minimum size=6mm},
+    transition/.style={rectangle,draw=black!50,fill=black!20,thick,inner sep=0pt,minimum size=4mm},
+    every label/.style={red},
+    bend angle=45,
+    pre/.style={<-,shorten <=1pt,>={Stealth[round]},semithick},
+    post/.style={->,shorten >=1pt,>={Stealth[round]},semithick}
+  ]
+
+  \node[place]      (waiting)                            {};
+  \node[place]      (critical)       [below=of waiting]  {};
+  \node[place]      (semaphore)      [below=of critical, label=above:$s\le3$] {};
+  \node[transition] (leave critical) [right=of critical] {}
+    edge [pre]             (critical)
+    edge [post,bend right] (waiting)
+    edge [pre, bend left]  (semaphore);
+  \node[transition] (enter critical) [left=of critical]  {}
+    edge [post]            (critical)
+    edge [pre, bend left]  (waiting)
+    edge [post,bend right] (semaphore);
+    \begin{scope}[on background layer]
+      \node [fill=black!30,fit=(waiting) (critical) (semaphore)
+               (leave critical) (enter critical)] {};
+    \end{scope}
+\end{tikzpicture}
+
+\tikz \graph { a -> {b, c} -> d };
+
+\usetikzlibrary {graphs.standard}
+\tikz \graph {
+  subgraph I_nm [V={a, b, c}, W={1,...,4}];
+
+  a -> { 1, 2, 3 };
+  b -> { 1, 4 };
+  c -> { 2 [>green!75!black], 3, 4 [>red]};
+};
+
+
+\usetikzlibrary {graphs}
+\tikz [>={To[sep]}, rotate=90, xscale=-1,
+       mark/.style={fill=black!50}, mark/.default=]
+  \graph [trie, simple,
+          nodes={circle,draw},
+          edges={nodes={
+              inner sep=1pt, anchor=mid,
+              fill=white}}, % yellowish background
+          put node text on incoming edges]
+    {
+      root[mark] -> {
+        a -> n -> {
+          g [mark],
+          f -> a -> n -> g [mark]
+        },
+        f -> a -> n -> g [mark],
+        g[mark],
+        n -> {
+          g[mark],
+          f -> a -> n -> g[mark]
+        }
+      },
+      { [edges=red] % highlight one path
+        root -> f -> a -> n
+      }
+    };
+
+
+\usetikzlibrary {graphs}
+\tikz \graph {
+  a -> b -> c;
+  d -> e -> f [as=$x_2x_3$, red];
+  d -> [bend left]  f;
+  d -> [bend right]  f;
+  b -> e;
+  e -> b;
+};
+
+\usetikzlibrary {graphs}
+\tikz
+  \graph [grow down,
+          branch right=2.5cm] {
+  root -> {
+    child 1,
+    child 2 -> {
+      grand child 1,
+      grand child 2
+    },
+    child 3 -> {
+      grand child 3
+    }
+  }
+};
 
 Maecenas in nisl dignissim, suscipit tellus efficitur, condimentum tortor. Vivamus bibendum faucibus libero, quis porttitor orci sollicitudin id. Integer at sapien iaculis, tincidunt risus non, eleifend nulla. Nam et diam eleifend, varius est vel, iaculis sapien. Phasellus faucibus, augue quis varius volutpat, lectus lectus congue sem, eu venenatis risus lorem nec lorem. Donec blandit lorem non turpis faucibus, ac faucibus mauris ultricies. Donec vehicula tristique turpis nec pellentesque. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec tempor nisi in elit dapibus, vel mattis diam dapibus. Donec id porta lorem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin tristique velit id purus hendrerit, vel venenatis massa tristique. Aliquam sed nibh fringilla, pretium erat vehicula, iaculis augue. Aenean leo massa, iaculis et tempus quis, molestie sed ipsum. Vestibulum cursus tincidunt suscipit. Nunc vehicula, quam sit amet semper interdum, mauris magna auctor felis, a placerat magna mi sed ex.
 
