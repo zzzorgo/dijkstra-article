@@ -50,7 +50,9 @@
 \title{\LaTeX}
 \date{February 2014}
 \author{Zzzorgo \thanks{thanks to bro}}
+
 \import{commands/}{section-abstract.tex}
+
 \usepackage{subfiles}
 
 % ========================== Content ========================== %
@@ -73,28 +75,12 @@
 
 \section{Введение}
 \subsection{Точное введение}
-% \subfile{commands/section-abstract}
-The set of real numbers are usually represented
-by a blackboard bold capital r: \( \R \).
+
 \subfile{sections/introduction}
 
-
 This text uses {\myfont a different} font typeface привет
-\renewcommand{\abstractname}{}
-\twocolumn[
-  \begin{@twocolumnfalse}
-    \section{Second section}
-    \begin{abstract}
-        \Large{\myfont{\color{accentColor}{Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut
-        purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis.
-        Curabitur dictum gravida mauris. Nam arcu libero, nonummy
-        eget, consectetuer id, vulputate a, magna. Donec vehicula
-        augue eu neque. Pellentesque habitant morbi tristique senectus
-        et netus et malesuada fames ac turpis egestas. Mauris ut leo.
-        Cras viverra metus rhoncus sem.\vspace{1cm}}}}
-    \end{abstract}
-  \end{@twocolumnfalse}
-]
+
+\sectionabstract
 
 \lipsum[1-12]
 
