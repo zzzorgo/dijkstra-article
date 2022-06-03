@@ -10,11 +10,13 @@
 \usepackage{polyglossia}
 \usepackage{lipsum}
 
-\newfontfamily\myfont[Scale=1.00]{Arial}
-\setmainfont{Arial}
+\def \mainfontname {Montserrat}
 
-\newfontfamily\cyrillicfont{Arial}[Script=Cyrillic]
-\newfontfamily\cyrillicfontsf{Arial}[Script=Cyrillic]
+\newfontfamily\myfont[Scale=1.00]{\mainfontname}
+\setmainfont{\mainfontname}
+
+\newfontfamily\cyrillicfont{\mainfontname}[Script=Cyrillic]
+\newfontfamily\cyrillicfontsf{\mainfontname}[Script=Cyrillic]
 
 \setmainlanguage{russian}
 
@@ -52,6 +54,7 @@
 \author{Zzzorgo \thanks{thanks to bro}}
 
 \import{commands/}{section-abstract.tex}
+\import{commands/}{font-weight.tex}
 
 \usepackage{subfiles}
 
@@ -89,6 +92,8 @@ This text uses {\myfont a different} font typeface привет
   et netus et malesuada fames ac turpis egestas. Mauris ut leo.
   Cras viverra metus rhoncus sem.
 }
+
+\fontweight{\mainfontname}{Black}{Lorem}
 
 \lipsum[1-12]
 
