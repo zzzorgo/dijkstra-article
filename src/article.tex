@@ -9,10 +9,13 @@
 \usepackage{fontspec}
 \usepackage{polyglossia}
 \usepackage{lipsum}
+\usepackage{setspace}
+
+\renewcommand{\baselinestretch}{1}
 
 \def \mainfontname {Montserrat}
 
-\newfontfamily\myfont[Scale=1.00]{\mainfontname}
+\newfontfamily\myfont{\mainfontname}
 \setmainfont{\mainfontname}
 
 \newfontfamily\cyrillicfont{\mainfontname}[Script=Cyrillic]
@@ -36,7 +39,7 @@
     {\thesection.}{0.33em}{}
 \titleformat{\subsection}
     {\myfont\large\color{accentColor}}
-    {\thesubsection.}{0.5em}{}
+    {\thesubsection}{0.5em}{}
 
 \usetikzlibrary{arrows.meta,decorations.pathmorphing,backgrounds,positioning,fit,petri,graphs,graphdrawing}
 \usegdlibrary {trees,force,layered}
@@ -84,18 +87,20 @@
 This text uses {\myfont a different} font typeface привет
 
 \sectionabstract{Hey}{
-  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut
-  purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis.
-  Curabitur dictum gravida mauris. Nam arcu libero, nonummy
-  eget, consectetuer id, vulputate a, magna. Donec vehicula
-  augue eu neque. Pellentesque habitant morbi tristique senectus
-  et netus et malesuada fames ac turpis egestas. Mauris ut leo.
-  Cras viverra metus rhoncus sem.
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut
+    purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis.
+    Curabitur dictum gravida mauris. Nam arcu libero, nonummy
+    eget, consectetuer id, vulputate a, magna. Donec vehicula
+    augue eu neque. Pellentesque habitant morbi tristique senectus
+    et netus et malesuada fames ac turpis egestas. Mauris ut leo.
+    Cras viverra metus rhoncus sem.
 }
 
 \fontweight{\mainfontname}{Black}{Lorem}
 
-\lipsum[1-12]
+{\setstretch{1.5}
+  \lipsum[1-12]
+}
 
 \tikz \graph
 [

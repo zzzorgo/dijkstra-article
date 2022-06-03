@@ -1,8 +1,10 @@
 \newcommand{\sectionabstract}[2]{
-    \twocolumn[
-    \begin{@twocolumnfalse}
-        \section{#1}
-        \Large{\myfont{\color{accentColor}{#2\vspace{1cm}}}}
-    \end{@twocolumnfalse}
-    ]
+    {\setstretch{1.7}
+        \twocolumn[
+        \begin{@twocolumnfalse}
+            \section{#1}
+            \Large{\myfont{\color{accentColor}{\vspace{0.5cm}#2\vspace{1cm}}}}
+        \end{@twocolumnfalse}
+        ]
+    }
 }
