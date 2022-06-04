@@ -2,28 +2,47 @@
 \begin{document}
 
 \sectionabstract{Обход деревьев}
-{Посмотрим, что такое деревья, и на два вида обхода их обхода: в глубину и в ширину.}
+{Посмотрим, как выглядят деревья в коде, и на два вида их обхода: в глубину и в ширину. Если вы знакомы с идеей обхода деревьев и уверены, что не запутаетесь в трех соснах, можете смело переходить к следующей части.}
 
 \subsection{Структура для обхода}
 
-Прежде чем что-то обойти, нужно это что-то иметь. В данном случае нам нужна структура данных, которая представляет дерево. Наверняка, существует миллион разных способов представить древесную структура. Наша же цель сделать это максимально просто и наглядно.
+Прежде чем что-то обойти, нужно это что-то иметь. В данном случае нам нужна структура данных, которая представляет дерево. Наверняка, существует миллион разных способов представить древесную структура, но наша цель сделать это максимально просто и наглядно.
 
-
-Пусть все дерево состоит из набора элементов типа {\firacodebold Node}, а корневой элемент лежит в переменной {\firacodebold root}.
-\begin{strip}
-    \begin{ruledtitle}
-        {\setstretch{1}
-            \begin{lstlisting}
+Пусть все дерево состоит из набора элементов типа {\firacodebold Node}, а корневой элемент лежит в переменной {\firacodebold treeRoot}.
+% \begin{strip}
+    \begin{ruledelement}
+        \begin{lstlisting}
 interface Node {
   data: string;
   children: Node[];
 }
 
-const treeRoot: Node = "hello";
-            \end{lstlisting}
-        }
-    \end{ruledtitle}
-\end{strip}
+const treeRoot: Node = // ...
+        \end{lstlisting}
+    \end{ruledelement}
+% \end{strip}
 
-Тогда этот текст будет ниже
+Здесь {\firacodebold data} это некая полезная нагрузка некого элемента (деревья, как и любая другая структура данных должны что-то хранить), а {\firacodebold children} - массив всех непосредственных потомков этого элемента. Каждый потомок это тоже элемент типа {\firacodebold Node} со своими данными и потомками. Так и выстраивается структура дерева как на рисунке \ref{fig:exampleTree}.
+
+\begin{figure}[t!]
+    \centering
+    \tikz \graph [
+        tree layout,
+        nodes={
+            circle, draw, very thick, accentColor, minimum size=9mm,
+            text=textColor, font=\bfseries,
+            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt
+        },
+        level distance=1.5cm,
+        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
+    ]
+    {
+        treeRoot -- { / -- { / , / -- / }, / -- / -- { / , / }}
+    };
+    \caption{Пример дерева}
+    \label{fig:exampleTree}
+\end{figure}
+
+
+
 \end{document}

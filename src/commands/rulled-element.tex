@@ -1,15 +1,13 @@
-\newenvironment{ruledtitle}
-{%
-    \vspace{3\baselineskip}
+\newenvironment{ruledelement}
+{
+    \vspace{\baselineskip}
     \par % ensure being in vertical mode
     \begingroup % limit the scope for the font selection
-    \centerline{\rule{\dimexpr(\textwidth)/2\relax}{0.4pt}}
-    \vspace{3pt}% spacing
+    \centerline{\textcolor{mainColor}{\rule{0.95\linewidth}{1pt}}}
+    \vspace{\baselineskip}
 }
-{%
-    \par % end the paragraph
-    \vspace{3pt} % spacing
-    \centerline{\rule{\dimexpr(\textwidth)/2\relax}{0.4pt}}
+{
+    \centerline{\textcolor{mainColor}{\rule{0.95\linewidth}{1pt}}}
     \endgroup
-    \vspace{3\baselineskip}% space after the title
+    \vspace{\baselineskip}
 }
