@@ -1,0 +1,29 @@
+\documentclass[../article.tex]{subfiles}
+\begin{document}
+
+\sectionabstract{Обход деревьев}
+{Посмотрим, что такое деревья, и на два вида обхода их обхода: в глубину и в ширину.}
+
+\subsection{Структура для обхода}
+
+Прежде чем что-то обойти, нужно это что-то иметь. В данном случае нам нужна структура данных, которая представляет дерево. Наверняка, существует миллион разных способов представить древесную структура. Наша же цель сделать это максимально просто и наглядно.
+
+
+Пусть все дерево состоит из набора элементов типа {\firacodebold Node}, а корневой элемент лежит в переменной {\firacodebold root}.
+\begin{strip}
+  \begin{ruledtitle}
+    {\setstretch{1}
+        \begin{lstlisting}
+interface Node {
+  data: string;
+  children: Node[];
+}
+
+const treeRoot: Node = "hello";
+        \end{lstlisting}
+    }
+    \end{ruledtitle}
+\end{strip}
+
+Тогда этот текст будет ниже
+\end{document}

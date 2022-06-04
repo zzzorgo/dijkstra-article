@@ -1,0 +1,21 @@
+\usepackage[russian]{babel}  % Включаем пакет для поддержки русского языка
+\usepackage{fontspec}
+\usepackage{polyglossia}
+
+\def \mainfontname {Montserrat}
+
+\newfontfamily\myfont{\mainfontname}
+\newfontfamily\firacodebold[Scale=0.95]{Fira Code Bold}
+\newfontfamily\firacodemd{Fira Code Medium}
+\setmonofont{Fira Code}[Contextuals=Alternate]
+
+\makeatletter
+\renewcommand*\verbatim@nolig@list{}
+\makeatother
+
+\setmainfont{\mainfontname}
+
+\newfontfamily\cyrillicfont{\mainfontname}[Script=Cyrillic]
+\newfontfamily\cyrillicfontsf{\mainfontname}[Script=Cyrillic]
+
+\setmainlanguage{russian}

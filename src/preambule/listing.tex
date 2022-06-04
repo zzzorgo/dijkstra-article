@@ -1,0 +1,39 @@
+\usepackage{listings}
+
+\renewcommand*{\lstlistingname}{Листинг}
+
+\lstdefinelanguage{JavaScript}{
+    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, const},
+    keywordstyle=\color{secondaryAccentColor}\firacodemd,
+    ndkeywords={class, export, boolean, throw, implements, import, this, interface},
+    ndkeywordstyle=\color{secondaryAccentColor}\firacodemd,
+    identifierstyle=\color{textColor},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{secondaryColor}\ttfamily,
+    stringstyle=\color{accentColor}\ttfamily,
+    morestring=[b]',
+    morestring=[b]",
+    keepspaces=true,
+    escapechar=\%,
+  }
+  
+  \lstset{
+    emph={Node, string},
+    emphstyle=\textbf,
+     language=JavaScript,
+     backgroundcolor=\color{backgroundColor},
+     extendedchars=true,
+     basicstyle=\normalsize\ttfamily,
+     showstringspaces=false,
+     showspaces=false,
+     numbers=left,
+     numberstyle=\normalsize\ttfamily,
+     numbersep=9pt,
+     tabsize=2,
+     breaklines=false,
+     showtabs=true,
+     captionpos=b,
+     extendedchars=true
+  }

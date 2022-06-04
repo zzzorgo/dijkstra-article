@@ -1,0 +1,17 @@
+\definecolor{accentColor}{cmyk}{0,0.78,0.79,0}
+% \definecolor{secondaryAccentColor}{cmyk}{0,0,0,0.3}
+\definecolor{secondaryAccentColor}{cmyk}{0.66,0.28,0,0}
+\definecolor{mainColor}{cmyk}{0,0,0,0.7}
+\definecolor{secondaryColor}{cmyk}{0,0,0,0.4}
+\definecolor{textColor}{named}{black}
+\definecolor{backgroundColor}{cmyk}{0.015,0.015,0.03,0}
+
+
+\makeatletter
+\newcommand{\globalcolor}[1]{
+  \color{#1}\global\let\default@color\current@color
+}
+\makeatother
+
+\AtBeginDocument{\globalcolor{textColor}}
+\pagecolor{backgroundColor}
