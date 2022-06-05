@@ -3,16 +3,16 @@
 \renewcommand*{\lstlistingname}{Листинг}
 
 \lstdefinelanguage{JavaScript}{
-    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, const},
+    keywords={typeof, new, true, false, catch, function, return, catch, switch, var, if, in, while, do, else, case, break, const, let, class, export, boolean, throw, implements, import, this, interface},
     keywordstyle=\color{accentColor}\firacodemd,
-    ndkeywords={class, export, boolean, throw, implements, import, this, interface},
-    ndkeywordstyle=\color{accentColor}\firacodemd,
+    ndkeywords={Node, string, null},
+    ndkeywordstyle=\color{secondaryAccentColor}\firacodemd,
     identifierstyle=\color{textColor},
     sensitive=false,
     comment=[l]{//},
     morecomment=[s]{/*}{*/},
     commentstyle=\color{secondaryColor}\ttfamily,
-    stringstyle=\color{accentColor}\ttfamily,
+    stringstyle=\color{secondaryAccentColor}\ttfamily,
     morestring=[b]',
     morestring=[b]",
     keepspaces=true,
@@ -20,7 +20,7 @@
 }
 
 \lstset{
-    emph={Node, string},
+    emph={},
     emphstyle=\textbf,
     language=JavaScript,
     backgroundcolor=\color{backgroundColor},

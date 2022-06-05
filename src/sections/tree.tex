@@ -1,8 +1,11 @@
 \documentclass[../article.tex]{subfiles}
 \begin{document}
-
+% todo привести терминологию в порядок (вершина/элемент)
+% todo заменить дефис на тире
 \sectionabstract{Обход деревьев}
 {Посмотрим, как выглядят деревья в коде, и на два вида их обхода: в глубину и в ширину. Если вы знакомы с идеей обхода деревьев и уверены, что не запутаетесь в трех соснах, можете смело переходить к следующей части.}
+
+Обходят деревья, обычно, не просто так, а для поиска целевого элемента дерева. Именно поиском целевого элемента мы и займемся.
 
 \subsection{Структура для обхода}
 
@@ -11,7 +14,7 @@
 Пусть все дерево состоит из набора элементов типа {\firacodebold Node}, а корневой элемент лежит в переменной {\firacodebold treeRoot}.
 % \begin{strip}
     \begin{ruledelement}
-        \begin{lstlisting}
+        \begin{lstlisting}[label={lst:treeStructure}]
 interface Node {
   data: string;
   children: Node[];
@@ -44,5 +47,186 @@ const treeRoot: Node = // ...
 \end{figure}
 
 
+    \begin{ruledelement}
+        \begin{lstlisting}[caption={Пример {\firacodebold treeRoot}}, label={lst:treeJson}]
+const node9 = {
+    data: '9',
+    children: [],
+};
+const node8 = {
+    data: '8',
+    children: [],
+};
+const node7 = {
+    data: '7',
+    children: [],
+};
+const node6 = {
+    data: '6',
+    children: [node8, node9],
+};
+const node5 = {
+    data: '5',
+    children: [node7],
+};
+const node4 = {
+    data: '4',
+    children: [],
+};
+const node3 = {
+    data: '3',
+    children: [node6],
+};
+const node2 = {
+    data: '2',
+    children: [node4, node5],
+};
+const treeRoot = {
+    data: '1',
+    children: [node2, node3],
+};
+        \end{lstlisting}
+    \end{ruledelement}
+
+
+Теперь, когда у нас есть структура данных для хранения дерева и корень дерева в переменной {\firacodebold treeRoot} мы можем приступить непосредственно к обходу.
+
+Надо сказать, что оба способа обхода очень похожи, и буквально отличаются одной строчкой. Разница между ними заключается в том, в каком порядке будет происходить обход. Поэтому, от того, какой именно алгоритм был выбран может зависеть только то, как быстро мы найдем нужный элемент.
+
+\subsection{Обход в глубину}
+
+Обход происходит последовательно, в каждой итерации обхода мы исследуем ровно один элемент. Вопрос только в том, откуда мы его берем? Ну что ж, первый элемент у нас уже есть, это {\firacodebold treeRoot} или корень дерева. Исследовав его мы можем начать исследовать всех его потомков, а затем потомков этих потомков и так далее, пока не найдем требуемый элемент или не переберем все элементы.
+
+\begin{strip}
+    \lstset{
+        emph={traverseTree},
+        emphstyle=\textbf,
+    }
+    \begin{topruledelement}
+        \begin{lstlisting}[caption={Обход дерева в глубину}, label={lst:treeDfs}]
+interface Node {
+  data: string;
+  children: Node[];
+}
+
+const treeRoot: Node = // ...
+
+function traverseTree() {
+    let currentNode = null;
+    const nextNodes = [treeRoot];
+
+    while (nextNodes.length !== 0) {
+        currentNode = nextNodes.pop();
+
+        if (currentNode.data === 'target data') {
+            return currentNode;
+        }
+
+        nextNodes.push(...currentNode.children);
+    }
+
+    return null;
+}
+
+        \end{lstlisting}
+    \end{topruledelement}
+\end{strip}
+
+Именно этот алгоритм и записан в листинге \ref{lst:treeDfs}. До начала выполнения основного цикла на строке 12 мы инициализируем массив {\firacodebold nextNodes} (стока 10). Туда мы будем класть все элементы, которые мы хотим обойти. На данный у нас есть только корень дерева, его и кладем. Строга говоря, {\firacodebold nextNodes} в данном примере исполняет роль не столько массива, сколько {\bfseries стека}.
+
+Войдя в цикл, первым делом мы достаем верхний элемент стека (строка 13) и кладем его в переменную {\firacodebold currentNode}. На этом этапе это {\firacodebold treeRoot}. Сразу после этого проверяем не является ли {\firacodebold currentNode} целевым элементом (строка 15). В нашем случае целевой элемент, тот, у которого поле {\firacodebold data} равно строке {\firacodebold 'target data'}.
+
+Если это действительно целевой элемент - выходим из цикла и функции, обход завершен, целевой элемент найден.
+
+Если же нет, то добавляем на стек всех потомков текущего элемента (на данный момент это потомки {\firacodebold treeRoot}) и заходим на новую итерацию. Снова достаем верхний элемент из {\firacodebold nextNodes} и повторяем итерацию.
+
+В худшем случае мы обойдем все дерево, так и не найдя целевой элемент, тогда в какой-то момент список {\firacodebold nextNodes} станет пустым и мы выйдем из функции на строке 22.
+
+Так почему же это поиск в глубину? На рисунке \ref{fig:treeDfsOrder} числами обозначен порядок обхода дерева. В этом алгоритме мы идем вглубь пока не дойдем до самого глубокого элемента и только после этого начинаем обрабатывать менее глубокие вершины, причем все еще максимально глубокие из доступных. Мы не перейдем ко второму потомку корневого элемента, пока не обойдем все поддерево первого потомка.
+
+Такой порядок достигается за счет того, что {\firacodebold nextNodes} является стеком. На строке 19 мы кладем элементы в конец массива, а на строке 13 достаем из конца массива. То есть достаем всегда самых свеженьких потомков.
+
+\begin{figure}
+    \centering
+    \tikz \graph [
+        tree layout,
+        nodes={
+            circle, draw, very thick, accentColor, minimum size=9mm,
+            text=textColor, font=\bfseries,
+            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt
+        },
+        level distance=1.5cm,
+        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
+    ]
+    {
+        1 -- { 6 -- { 9 , 7 -- 8 }, 2 -- 3 -- { 5 , 4 }}
+    };
+    \caption{Порядок обхода в глубину}
+    \label{fig:treeDfsOrder}
+\end{figure}
+
+
+\subsection{Обход в ширину}
+
+Если сравнивать обход в ширину с обходом в глубину, то у второго ровно одно отличие - вместо стека для {\firacodebold nextNodes} используется {\bfseries очередь}. В листинге \ref{lst:treeBfs} на строке 13 вместо последнего элемента массива мы достаем первый (это и делает наш массив очередью), а так как первыми в очередь попадают более близкие к корню потомки, то мы вначале обойдем их и только потом пойдем глубже. Порядок обхода показан на рисунке \ref{fig:treeBfsOrder}.
+
+\begin{figure}
+    \centering
+    \tikz \graph [
+        tree layout,
+        nodes={
+            circle, draw, very thick, accentColor, minimum size=9mm,
+            text=textColor, font=\bfseries,
+            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt
+        },
+        level distance=1.5cm,
+        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
+    ]
+    {
+        1 -- { 2 -- { 4 , 5 -- 7 }, 3 -- 6 -- { 8 , 9 }}
+    };
+    \caption{Порядок обхода в ширину}
+    \label{fig:treeBfsOrder}
+\end{figure}
+
+\subsection{Вместо заключения}
+Наверняка вам сейчас захотелось попробовать этот код самим, и это отличная идея. Правда, помимо функции обхода дерева нужно еще и само дерево, формирование которого может быть утомительным. Поэтому ниже в листинге \ref{lst:treeJson} приведен пример дерева, которое можно скопировать к себе в код. Его структура и нейминг соответствует той, что на рисунке \ref{fig:treeBfsOrder}.
+
+% \twocolumnbagebreak
+
+\begin{strip}
+    \lstset{
+        emph={shift},
+        emphstyle=\textbf,
+    }
+    \begin{ruledelement}
+        \begin{lstlisting}[caption={Обход дерева в ширину}, label={lst:treeBfs}]
+interface Node {
+  data: string;
+  children: Node[];
+}
+
+const treeRoot: Node = // ...
+
+function traverseTree() {
+    let currentNode = null;
+    const nextNodes = [treeRoot];
+
+    while (nextNodes.length !== 0) {
+        currentNode = nextNodes.shift();
+
+        if (currentNode.data === 'target data') {
+            return currentNode;
+        }
+
+        nextNodes.push(...currentNode.children);
+    }
+
+    return null;
+}
+
+        \end{lstlisting}
+    \end{ruledelement}
+\end{strip}
 
 \end{document}

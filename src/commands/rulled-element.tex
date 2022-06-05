@@ -11,3 +11,13 @@
     \endgroup
     \vspace{\baselineskip}
 }
+
+\newenvironment{topruledelement}
+{
+    \vspace{\baselineskip}
+    \par % ensure being in vertical mode
+    \begingroup % limit the scope for the font selection
+    \centerline{\textcolor{mainColor}{\rule{0.95\linewidth}{1pt}}}
+    \vspace{\baselineskip}
+    \endgroup
+}{}
