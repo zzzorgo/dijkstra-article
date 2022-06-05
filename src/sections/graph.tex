@@ -12,13 +12,14 @@
 
 \begin{ruledelement}
     \lstset{
-        emph={startingNode, neighbors},
+        emph={startingNode, neighbors, visited},
         emphstyle=\textbf,
     }
-    \begin{lstlisting}[caption={Структура врешины графа}, label={lst:graphStructureTreeLike}]
+    \begin{lstlisting}[caption={Структура вершины графа}, label={lst:graphStructureTreeLike}]
 interface Node {
     data: string;
     neighbors: Node[];
+    visited?: boolean;
 }
 
 
@@ -28,6 +29,145 @@ const startingNode: Node = // ...
 
 Как видно из листинга \ref{lst:graphStructureTreeLike}, поменялось не очень много. В классическом понимании у графа нет корня, но в наших задачах есть вершина {\firacodebold startingNode}, с которой мы начинаем обход. У элементов нет потомков, только соседние элементы {\firacodebold neighbors}. Тем не менее, если исключить переименовывание это та же структура, а значит и обойти ее можно так же?
 
-На самом деле не совсем так. Из определения деревьев следует ограничение на то, какие именно элементы могут быть потомками для других элементов. То есть например вершина-потомок не может иметь в качестве своего потомка своего же родителя. Наличие такой связи автоматически превратит дерево в граф.
+На самом деле не совсем так. Из определения деревьев следует ограничение на то, какие именно элементы могут быть потомками для других элементов. То есть например вершина-потомок не может иметь в качестве своего потомка своего же родителя. Наличие же такой связи в итоговом дереве автоматически превратит дерево в граф.
+
+А про поле {\firacodebold visited} поговорим позже.
+
+\begin{figure}
+    \centering
+    \tikz \graph [
+        tree layout,
+        nodes={
+            circle, draw, very thick, accentColor, minimum size=9mm,
+            text=textColor, font=\bfseries,
+            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
+        },
+        level distance=1.5cm,
+        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
+    ]
+    {
+        a -> { b -> { c , d -> e }, f -> g -> { h , i }},
+        i -> [bend right=45] f,
+        c -> [bend left=45] a
+    };
+    \caption{Пример графа}
+    \label{fig:treeTurningToGraph}
+\end{figure}
+
+На рисунке \ref{fig:treeTurningToGraph} хорошо видно как это происходит при, например, добавление двух связей (ребер): от {\firacodebold b} к {\firacodebold a} и от {\firacodebold d} к {\firacodebold c}. Так же на это рисунке более явно указано направлении связи, где стрелка идет от элемента-родителя до элемента-потомка. Добавление этих связей в коде можно выразить в коде (листинг \ref{lst:treeTurningToGraph}).
+
+\begin{ruledelement}
+    \lstset{
+        emph={neighbors,push},
+        emphstyle={\textbf}
+    }
+    \begin{lstlisting}[caption={Добавление связей превращающих дерево в грфа}, label={lst:treeTurningToGraph}]
+// `visited` field is omitted as
+// it is optional and not used yet
+const nodeI = {
+    data: 'i',
+    neighbors: [],
+};
+const nodeH = {
+    data: 'h',
+    neighbors: [],
+};
+const nodeE = {
+    data: 'e',
+    neighbors: [],
+};
+const nodeG = {
+    data: 'g',
+    neighbors: [nodeH, nodeI],
+};
+const nodeD = {
+    data: 'd',
+    neighbors: [nodeE],
+};
+const nodeC = {
+    data: 'c',
+    neighbors: [],
+};
+const nodeF = {
+    data: 'f',
+    neighbors: [nodeG],
+};
+const nodeB = {
+    data: 'b',
+    neighbors: [nodeC, nodeD],
+};
+const nodeA = {
+    data: 'a',
+    neighbors: [nodeB, nodeF],
+};
+
+nodeI.neighbors.push(nodeF);
+nodeC.neighbors.push(nodeA);
+    \end{lstlisting}
+\end{ruledelement}
+
+
+Что ж, после этих манипуляций структура дерева не сильно поменялась, как и алгоритм ее обхода, хоть это теперь и граф.
+
+\subsection{Обход в глубину}
+
+Предположим, что мы не стали бы менять наш алгоритм и подсунули ему наш граф. В таком случае все работает так же как и для дерева до момента, когда основной цикл дойдет до обработки {\firacodebold nodeC}. В момент обработки {\firacodebold nodeC} алгоритм добавит всех потомков, то есть включая {\firacodebold nodeA}. То есть мы снова вернемся к началу и снова добавим всех потомков {\firacodebold nodeA} на обработку, а дальше потомков потомков, то есть {\firacodebold nodeC} тоже. В итоге получается бесконечный цикл.
+
+Если же мы исключим из обхода уже обработанные вершины, то второй раз в {\firacodebold nodeA} мы не попадем, собственно это и есть все отличие (листинг \ref{lst:graphDfs}).
+
+В момент обработки очередного элемента {\firacodebold currentNode} мы выставляем флаг {\firacodebold visited} в значение {\firacodebold true} (строка 9), чтобы на последующих итерациях не добавлять ее в стек {\firacodebold nextNodes} (строки 15-18). Порядок обхода в данном случае не отличается от порядка обхода того же дерева и можно посмотреть на рисунке \ref{fig:treeDfsOrder}.
+
+\subsection{Обход в ширину}
+
+Кажется довольно очевидно, что обход ширину, как и для деревьев, будет отличаться лишь одной сточкой, изменяя лишь порядок обхода, который можно посмотреть на рисунке \ref{fig:treeBfsOrder}.
+
+\begin{ruledelement}
+    \lstset{
+        emph={shift},
+        emphstyle=\textbf,
+    }
+    \begin{lstlisting}[caption={Отличие обхода в ширину от обхода в глубину}, label={lst:graphBfsDiff}]
+// currentNode = nextNodes.pop();
+currentNode = nextNodes.shift();
+    \end{lstlisting}
+\end{ruledelement}
+
+\twocolumnbagebreak
+
+\begin{strip}
+    \lstset{
+        emph={traverseGraph, visited, filter},
+        emphstyle=\textbf,
+    }
+    \begin{ruledelement}
+        \begin{lstlisting}[caption={Обход графа в глубину}, label={lst:graphDfs}]
+const startingNode = nodeA;
+
+function traverseGraph() {
+    let currentNode = null;
+    const nextNodes = [startingNode];
+
+    while (nextNodes.length !== 0) {
+        currentNode = nextNodes.pop();
+        currentNode.visited = true;
+
+        if (currentNode.data === 'target data') {
+            return currentNode;
+        }
+
+        const nodesToAdd = currentNode.neighbors
+            .filter(nextNode => !nextNode.visited);
+
+        nextNodes.push(...nodesToAdd);
+    }
+
+    return null;
+}
+
+        \end{lstlisting}
+    \end{ruledelement}
+\end{strip}
+
+\lipsum[1]
 
 \end{document}
