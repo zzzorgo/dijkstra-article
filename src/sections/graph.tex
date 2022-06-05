@@ -54,7 +54,7 @@ const startingNode: Node = // ...
     \label{fig:treeTurningToGraph}
 \end{figure}
 
-На рисунке \ref{fig:treeTurningToGraph} хорошо видно как это происходит при, например, добавление двух связей (ребер): от {\firacodebold b} к {\firacodebold a} и от {\firacodebold d} к {\firacodebold c}. Так же на это рисунке более явно указано направлении связи, где стрелка идет от элемента-родителя до элемента-потомка. Добавление этих связей в коде можно выразить в коде (листинг \ref{lst:treeTurningToGraph}).
+На рисунке \ref{fig:treeTurningToGraph} хорошо видно как это происходит при, например, добавление двух связей (ребер): от {\firacodebold c} к {\firacodebold a} и от {\firacodebold i} к {\firacodebold f}. Так же на это рисунке более явно указано направлении связи, где стрелка идет от элемента-родителя до элемента-потомка. Добавление этих связей в коде можно выразить в коде (листинг \ref{lst:treeTurningToGraph}).
 
 \begin{ruledelement}
     \lstset{
@@ -125,12 +125,49 @@ nodeC.neighbors.push(nodeA);
     \lstset{
         emph={shift},
         emphstyle=\textbf,
+        firstnumber=8,
     }
     \begin{lstlisting}[caption={Отличие обхода в ширину от обхода в глубину}, label={lst:graphBfsDiff}]
 // currentNode = nextNodes.pop();
 currentNode = nextNodes.shift();
     \end{lstlisting}
 \end{ruledelement}
+
+\begin{figure}
+    \centering
+    \tikz \graph [
+        tree layout,
+        nodes={
+            circle, draw, very thick, accentColor, minimum size=9mm,
+            text=textColor, font=\bfseries,
+            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
+        },
+        level distance=1.5cm,
+        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
+        disabledEdge/.style={secondaryColor},
+        disabledNode/.style={
+            secondaryColor,
+            pattern=hatch, pattern color={secondaryColor!70}, hatch size=4pt,
+        },
+    ]
+    {
+        a -> {
+            b -> { c [disabledNode], d -> e },
+            f [disabledNode] -> [disabledEdge]
+                g [disabledNode] -> [disabledEdge] {
+                    h [disabledNode],
+                    i [disabledNode]
+                }
+        },
+        a -> [disabledEdge] f,
+        b -> [disabledEdge] c,
+        i -> [bend right=45, disabledEdge] f,
+        c -> [bend left=45, disabledEdge] a,
+        e <- [bend right=22] a,
+    };
+    \caption{Пути в графе от {\firacodebold a} к {\firacodebold e}}
+    \label{fig:pathExposure}
+\end{figure}
 
 \twocolumnbagebreak
 
@@ -163,11 +200,14 @@ function traverseGraph() {
 
     return null;
 }
-
         \end{lstlisting}
     \end{ruledelement}
 \end{strip}
 
-\lipsum[1]
+\subsection{Поиск пути}
+
+Помимо поиска отдельно взятой вершины графа, часто бывает полезно найти путь до этой вершины от той вершины, с которой мы начинали ({\firacodebold startingNode}). Но что такое найти путь? Будем считать, что путь это связный список, начало которого это все та же {\firacodebold startingNode}, конец - целевая вершина, а в середине все ноды по пути. Чтобы у нас было больше одного возможного пути добавим еще одно ребро {\firacodebold a -> e}.
+
+Предположим, что мы ищем путь от вершины {\firacodebold a} до вершины {\firacodebold e} (рис. \ref{fig:pathExposure})
 
 \end{document}
