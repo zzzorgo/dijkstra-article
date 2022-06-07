@@ -1,0 +1,21 @@
+\newcommand{\styledgraph}[1]{
+    \begin{center}
+        \tikz \graph [
+            tree layout,
+            nodes={
+                circle, draw, very thick, accentColor, minimum size=9mm,
+                text=textColor, font=\bfseries,
+                pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
+            },
+            level distance=1.5cm,
+            edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
+            disabledEdge/.style={secondaryColor},
+            reverseEdge/.style={secondaryAccentColor},
+            disabledNode/.style={
+                secondaryColor,
+                pattern=hatch, pattern color={secondaryColor!70}, hatch size=4pt,
+            },
+        ]
+        { #1 };
+    \end{center}
+}

@@ -34,22 +34,11 @@ const startingNode: Node = // ...
 А про поле {\firacodebold visited} поговорим позже.
 
 \begin{figure}
-    \centering
-    \tikz \graph [
-        tree layout,
-        nodes={
-            circle, draw, very thick, accentColor, minimum size=9mm,
-            text=textColor, font=\bfseries,
-            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
-        },
-        level distance=1.5cm,
-        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
-    ]
-    {
+    \styledgraph{
         a -> { b -> { c , d -> e }, f -> g -> { h , i }},
         i -> [bend right=45] f,
         c -> [bend left=45] a
-    };
+    }
     \caption{Пример графа}
     \label{fig:treeTurningToGraph}
 \end{figure}
@@ -134,23 +123,7 @@ currentNode = nextNodes.shift();
 \end{ruledelement}
 
 \begin{figure}
-    \centering
-    \tikz \graph [
-        tree layout,
-        nodes={
-            circle, draw, very thick, accentColor, minimum size=9mm,
-            text=textColor, font=\bfseries,
-            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
-        },
-        level distance=1.5cm,
-        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
-        disabledEdge/.style={secondaryColor},
-        disabledNode/.style={
-            secondaryColor,
-            pattern=hatch, pattern color={secondaryColor!70}, hatch size=4pt,
-        },
-    ]
-    {
+    \styledgraph{
         a -> {
             b -> { c [disabledNode], d -> e },
             f [disabledNode] -> [disabledEdge]
@@ -164,14 +137,12 @@ currentNode = nextNodes.shift();
         i -> [bend right=45, disabledEdge] f,
         c -> [bend left=45, disabledEdge] a,
         e <- [bend right=22] a,
-    };
+    }
     \caption{Пути в графе от {\firacodebold a} к {\firacodebold e}}
     \label{fig:pathExposure}
 \end{figure}
 
-\twocolumnbagebreak
-
-\begin{strip}
+\begin{figure*}
     \lstset{
         emph={traverseGraph, visited, filter},
         emphstyle=\textbf,
@@ -202,12 +173,35 @@ function traverseGraph() {
 }
         \end{lstlisting}
     \end{ruledelement}
-\end{strip}
+
+\end{figure*}
 
 \subsection{Поиск пути}
 
 Помимо поиска отдельно взятой вершины графа, часто бывает полезно найти путь до этой вершины от той вершины, с которой мы начинали ({\firacodebold startingNode}). Но что такое найти путь? Будем считать, что путь это связный список, начало которого это все та же {\firacodebold startingNode}, конец - целевая вершина, а в середине все ноды по пути. Чтобы у нас было больше одного возможного пути добавим еще одно ребро {\firacodebold a -> e}.
 
 Предположим, что мы ищем путь от вершины {\firacodebold a} до вершины {\firacodebold e} (рис. \ref{fig:pathExposure})
+
+\ref{fig:pathExposure2}
+
+\begin{figure*}
+    \styledgraph{
+        1 -> {6 -> {9, 7 -> 8}, 2 -> 3 -> {5, 4}},
+        a` <- {b` <- {c`, d` <- e`}, f` <- g` <- {h`, i`}},
+
+        a -> [disabledEdge] b [disabledNode],
+        b -> c [disabledNode],
+        b -> [disabledEdge] d [disabledNode],
+        d -> [disabledEdge] e [disabledNode],
+        f -> g,
+        g -> h,
+        g -> [disabledEdge] i [disabledNode],
+        a -> f,
+        b -> [disabledEdge] c,
+        i -> [bend right=45, disabledEdge] f,
+        c -> [bend left=45, disabledEdge] a,
+        h <- a,
+    }
+\end{figure*}
 
 \end{document}

@@ -28,20 +28,9 @@ const treeRoot: Node = // ...
 Здесь {\firacodebold data} это некая полезная нагрузка некого элемента (деревья, как и любая другая структура данных должны что-то хранить), а {\firacodebold children} - массив всех непосредственных потомков этого элемента. Каждый потомок это тоже элемент типа {\firacodebold Node} со своими данными и потомками. Так и выстраивается структура дерева как на рисунке \ref{fig:exampleTree}.
 
 \begin{figure}[t!]
-    \centering
-    \tikz \graph [
-        tree layout,
-        nodes={
-            circle, draw, very thick, accentColor, minimum size=9mm,
-            text=textColor, font=\bfseries,
-            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt
-        },
-        level distance=1.5cm,
-        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
-    ]
-    {
+    \styledgraph{
         treeRoot -- { / -- { / , / -- / }, / -- / -- { / , / }}
-    };
+    }
     \caption{Пример дерева}
     \label{fig:exampleTree}
 \end{figure}
@@ -147,20 +136,10 @@ function traverseTree() {
 Такой порядок достигается за счет того, что {\firacodebold nextNodes} является стеком. На строке 19 мы кладем элементы в конец массива, а на строке 13 достаем из конца массива. То есть достаем всегда самых свеженьких потомков.
 
 \begin{figure}
-    \centering
-    \tikz \graph [
-        tree layout,
-        nodes={
-            circle, draw, very thick, accentColor, minimum size=9mm,
-            text=textColor, font=\bfseries,
-            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt
-        },
-        level distance=1.5cm,
-        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
-    ]
+    \styledgraph
     {
         1 -- { 6 -- { 9 , 7 -- 8 }, 2 -- 3 -- { 5 , 4 }}
-    };
+    }
     \caption{Порядок обхода в глубину}
     \label{fig:treeDfsOrder}
 \end{figure}
@@ -171,20 +150,10 @@ function traverseTree() {
 Если сравнивать обход в ширину с обходом в глубину, то у второго ровно одно отличие - вместо стека для {\firacodebold nextNodes} используется {\bfseries очередь}. В листинге \ref{lst:treeBfs} на строке 13 вместо последнего элемента массива мы достаем первый (это и делает наш массив очередью), а так как первыми в очередь попадают более близкие к корню потомки, то мы вначале обойдем их и только потом пойдем глубже. Порядок обхода показан на рисунке \ref{fig:treeBfsOrder}.
 
 \begin{figure}
-    \centering
-    \tikz \graph [
-        tree layout,
-        nodes={
-            circle, draw, very thick, accentColor, minimum size=9mm,
-            text=textColor, font=\bfseries,
-            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt
-        },
-        level distance=1.5cm,
-        edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
-    ]
+    \styledgraph
     {
         1 -- { 2 -- { 4 , 5 -- 7 }, 3 -- 6 -- { 8 , 9 }}
-    };
+    }
     \caption{Порядок обхода в ширину}
     \label{fig:treeBfsOrder}
 \end{figure}
