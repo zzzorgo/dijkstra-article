@@ -37,7 +37,7 @@ const startingNode: Node = // ...
     \styledgraph{
         a -> { b -> { c , d -> e }, f -> g -> { h , i }},
         i -> [bend right=45] f,
-        c -> [bend left=45] a
+        c -> [bend left=45] a,
     }
     \caption{Пример графа}
     \label{fig:treeTurningToGraph}
@@ -122,26 +122,6 @@ currentNode = nextNodes.shift();
     \end{lstlisting}
 \end{ruledelement}
 
-\begin{figure}
-    \styledgraph{
-        a -> {
-            b -> { c [disabledNode], d -> e },
-            f [disabledNode] -> [disabledEdge]
-                g [disabledNode] -> [disabledEdge] {
-                    h [disabledNode],
-                    i [disabledNode]
-                }
-        },
-        a -> [disabledEdge] f,
-        b -> [disabledEdge] c,
-        i -> [bend right=45, disabledEdge] f,
-        c -> [bend left=45, disabledEdge] a,
-        e <- [bend right=22] a,
-    }
-    \caption{Пути в графе от {\firacodebold a} к {\firacodebold e}}
-    \label{fig:pathExposure}
-\end{figure}
-
 \begin{figure*}
     \lstset{
         emph={traverseGraph, visited, filter},
@@ -185,23 +165,60 @@ function traverseGraph() {
 \ref{fig:pathExposure2}
 
 \begin{figure*}
-    \styledgraph{
-        1 -> {6 -> {9, 7 -> 8}, 2 -> 3 -> {5, 4}},
-        a` <- {b` <- {c`, d` <- e`}, f` <- g` <- {h`, i`}},
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            1 -> {6 -> {9, 7 -> 8}, 2 -> 3 -> {5, 4}}
+        }
+        \caption{cba}
+        \label{fig:first}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a` <- {b` <- {c`, d` <- e`}, f` <- g` <- {h`, i`}}
+        }
+        \caption{abc}
+        \label{fig:second}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a -> [disabledEdge] b [disabledNode],
+            b -> c [disabledNode],
+            b -> [disabledEdge] d [disabledNode],
+            d -> [disabledEdge] e [disabledNode],
+            f -> g,
+            g -> h,
+            g -> [disabledEdge] i [disabledNode],
+            a -> f,
+            b -> [disabledEdge] c,
+            i -> [bend right=45, disabledEdge] f,
+            c -> [bend left=45, disabledEdge] a,
+            h <- a,
+        }
+        \caption{def}
+        \label{fig:third}
+    \end{subfigure}
+    \caption{Hbc}
+\end{figure*}
 
-        a -> [disabledEdge] b [disabledNode],
-        b -> c [disabledNode],
-        b -> [disabledEdge] d [disabledNode],
-        d -> [disabledEdge] e [disabledNode],
-        f -> g,
-        g -> h,
-        g -> [disabledEdge] i [disabledNode],
-        a -> f,
+\begin{figure}[H]
+    \styledgraph{
+        a -> {
+            b -> { c [disabledNode], d -> e },
+            f [disabledNode] -> [disabledEdge]
+                g [disabledNode] -> [disabledEdge] {
+                    h [disabledNode],
+                    i [disabledNode]
+                }
+        },
+        a -> [disabledEdge] f,
         b -> [disabledEdge] c,
         i -> [bend right=45, disabledEdge] f,
         c -> [bend left=45, disabledEdge] a,
-        h <- a,
+        e <- [bend right=22] a,
     }
-\end{figure*}
+    \caption{Пути в графе от {\firacodebold a} к {\firacodebold e}}
+    \label{fig:pathExposure}
+\end{figure}
 
 \end{document}

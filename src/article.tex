@@ -1,7 +1,6 @@
 \documentclass[9pt, letterpaper, twocolumn]{article}
 \usepackage{import}
 \usepackage{cuted}
-\usepackage{caption}
 \usepackage{subcaption}
 \usepackage{float}
 
@@ -11,6 +10,8 @@
 \import{preambule/defaults/}{index.tex}
 \import{preambule/}{listing.tex}
 \import{preambule/}{titles.tex}
+
+\renewcommand{\thesubfigure}{\asbuk{subfigure}}
 
 \import{commands/}{section-abstract.tex}
 \import{commands/}{font-weight.tex}
