@@ -9,8 +9,12 @@
             },
             level distance=1.5cm,
             edges={shorten <=1pt,>={Stealth[round]},very thick,accentColor},
-            disabledEdge/.style={secondaryColor},
             reverseEdge/.style={secondaryAccentColor},
+            reverseNode/.style={
+                secondaryAccentColor,
+                pattern=hatch, pattern color={secondaryAccentColor!70}, hatch size=4pt,
+            },
+            disabledEdge/.style={secondaryColor},
             disabledNode/.style={
                 secondaryColor,
                 pattern=hatch, pattern color={secondaryColor!70}, hatch size=4pt,
