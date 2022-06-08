@@ -110,14 +110,6 @@ nodeA.neighbors.push(nodeH);
 
 Предположим, что мы не стали бы менять наш алгоритм и подсунули ему наш граф. В таком случае все работает так же как и для дерева до определенного момента. Первым делом наш обход в глубину пойдет по правой ветке графа и дойдет до {\firacodebold nodeF} на второй итерации. На четвертой итерации он дойдет до обработки {\firacodebold nodeI}. В момент обработки элемента {\firacodebold nodeI} алгоритм добавит всех его потомков, то есть включая {\firacodebold nodeF} в стек обработки {\firacodebold nextNodes}. То есть мы снова вернемся к обработке элемента {\firacodebold nodeF} и снова добавим всех потомков {\firacodebold nodeF} на обработку, а дальше потомков потомков, и {\firacodebold nodeI} тоже. В итоге получается бесконечный цикл.
 
-Если же мы исключим из обхода уже обработанные вершины, то второй раз в {\firacodebold nodeF} мы не попадем, собственно это и есть все отличие (листинг \ref{lst:graphDfs}).
-
-В момент обработки очередного элемента {\firacodebold currentNode} мы выставляем флаг {\firacodebold visited} в значение {\firacodebold true} (строка 9), чтобы на последующих итерациях не добавлять обработанный элемент в стек {\firacodebold nextNodes} (строки 15-18). Порядок обхода в данном случае не отличается от порядка обхода того же дерева и можно посмотреть на рисунке \ref{fig:treeDfsOrder} (хотя он мог поменяться, но для простоты мы выбрали такой граф, где этого не происходит).
-
-\subsection{Обход в ширину}
-
-Кажется довольно очевидно, что обход ширину, как и для деревьев, будет отличаться лишь одной сточкой. Однако, из-за ребра {\firacodebold a -> h} порядок обхода нашего графа в ширину изменится. На первой же итерации обхода алгоритм добавит всех потомков элемента {\firacodebold nodeA} на в очередь {\firacodebold nextNodes}, включая элемент {\firacodebold nodeH}. А значит он будет обработан одним из первых (рис. \ref{fig:}).
-
 \begin{figure}
     \styledgraph{
         1 -> 2,
@@ -137,19 +129,13 @@ nodeA.neighbors.push(nodeH);
     \label{fig:graphBfsOrder}
 \end{figure}
 
-\begin{ruledelement}
-    \lstset{
-        emph={shift},
-        emphstyle=\textbf,
-        firstnumber=8,
-    }
-    \begin{lstlisting}[caption={Отличие обхода в ширину от обхода в глубину}, label={lst:graphBfsDiff}]
-// currentNode = nextNodes.pop();
-currentNode = nextNodes.shift();
-    \end{lstlisting}
-\end{ruledelement}
+Если же мы исключим из обхода уже обработанные вершины, то второй раз в {\firacodebold nodeF} мы не попадем, собственно это и есть все отличие (листинг \ref{lst:graphDfs}).
 
-\begin{figure*}
+В момент обработки очередного элемента {\firacodebold currentNode} мы выставляем флаг {\firacodebold visited} в значение {\firacodebold true} (строка 9), чтобы на последующих итерациях не добавлять обработанный элемент в стек {\firacodebold nextNodes} (строки 15-18). Порядок обхода в данном случае не отличается от порядка обхода того же дерева и можно посмотреть на рисунке \ref{fig:treeDfsOrder} (хотя он мог поменяться, но для простоты мы выбрали такой граф, где этого не происходит).
+
+\subsection{Обход в ширину}
+
+\begin{figure*}[h]
     \lstset{
         emph={traverseGraph, visited, filter},
         emphstyle=\textbf,
@@ -166,7 +152,7 @@ function traverseGraph() {
         currentNode = nextNodes.pop();
         currentNode.visited = true;
 
-        if (currentNode.data === 'target data') {
+        if (currentNode.data === 'h') {
             return currentNode;
         }
 
@@ -183,11 +169,91 @@ function traverseGraph() {
 
 \end{figure*}
 
+Кажется довольно очевидно, что обход ширину, как и для деревьев, будет отличаться лишь одной сточкой. Однако, из-за ребра {\firacodebold a -> h} порядок обхода нашего графа в ширину изменится. На первой же итерации обхода алгоритм добавит всех потомков элемента {\firacodebold nodeA} на в очередь {\firacodebold nextNodes}, включая элемент {\firacodebold nodeH}. А значит он будет обработан одним из первых (рис. \ref{fig:graphBfsOrder}).
+
+\begin{ruledelement}
+    \lstset{
+        emph={shift},
+        emphstyle=\textbf,
+        firstnumber=8,
+    }
+    \begin{lstlisting}[caption={Отличие обхода в ширину от обхода в глубину}, label={lst:graphBfsDiff}]
+// currentNode = nextNodes.pop();
+currentNode = nextNodes.shift();
+    \end{lstlisting}
+\end{ruledelement}
+
 \subsection{Поиск пути}
 
 Помимо поиска отдельно взятой вершины графа, часто бывает полезно найти путь до этой вершины от той вершины, с которой мы начинали ({\firacodebold startingNode}). Но что такое найти путь? Будем считать, что путь это массив вершин, первый элемент которого это все та же {\firacodebold startingNode}, последний - целевая вершина, а в середине все ноды по пути.
 
+\begin{figure}
+    \styledgraph{
+        a -> [disabledEdge] b [disabledNode],
+        b -> c [disabledNode],
+        b -> [disabledEdge] d [disabledNode],
+        d -> [disabledEdge] e [disabledNode],
+        f -> g,
+        g -> h,
+        g -> [disabledEdge] i [disabledNode],
+        a -> f,
+        b -> [disabledEdge] c,
+        i -> [bend right=45, disabledEdge] f,
+        c -> [bend left=45, disabledEdge] a,
+        h <- a,
+    }
+    \caption{Пути в графе от {\firacodebold a} к {\firacodebold h}}
+    \label{fig:pathExposure}
+\end{figure}
+
+\begin{figure*}[h]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a [disabledNode] <- [bend left=22] {b [disabledNode] <- [bend left=22] {c [disabledNode], d [disabledNode] <- [bend left=22] e [disabledNode]}, f [disabledNode] <- [bend left=22] g [disabledNode] <- [bend left=22] {h [disabledNode], i [disabledNode]}},
+
+            a -> [disabledEdge] b [disabledNode],
+            b -> c [disabledNode],
+            b -> [disabledEdge] d [disabledNode],
+            d -> [disabledEdge] e [disabledNode],
+            f -> [disabledEdge] g,
+            g -> [disabledEdge] h,
+            g -> [disabledEdge] i [disabledNode],
+            a -> [disabledEdge] f,
+            b -> [disabledEdge] c,
+            i -> [bend right=45, disabledEdge] f,
+            c -> [bend left=45, disabledEdge] a,
+            h <- [disabledEdge] a,
+        }
+        \caption{Связи {\firacodebold parent}}
+        \label{fig:third}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a  <-  {b  <-  {c , d  <-  e }, f  <-  g  <-  {h , i }},
+        }
+        \caption{Обратное дерево обхода}
+        \label{fig:second}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a <- [disabledEdge] b [disabledNode],
+            b <- c [disabledNode],
+            b <- [disabledEdge] d [disabledNode],
+            d <- [disabledEdge] e [disabledNode],
+            f <- g,
+            g <- h,
+            g <- [disabledEdge] i [disabledNode],
+            a <- f,
+            b <- [disabledEdge] c,
+        }
+        \caption{Обратный путь}
+        \label{fig:first}
+    \end{subfigure}
+    \caption{Путь при обходе в глубину}
+\end{figure*}
 Предположим, что мы ищем путь от вершины {\firacodebold a} до вершины {\firacodebold h} (рис. \ref{fig:pathExposure}). Видно, что есть ровно два возможных пути, это {\firacodebold [a, h]} и {\firacodebold [a, f, g, h]}. Видно нам, но не алгоритму, так как для него входными данными является {\firacodebold startingNode}, а на каждой итерации мы обрабатываем ровно одну вершину, то после того как обходом мы нашли целевую вершину, у нас есть только конец и начало пути. Для некоторых путей, таких как {\firacodebold [a, h]} этого достаточно, но в общем случае, конечно же нет. Нужно как-то получить весь путь.
+
 
 Если подумать, то в процессе обхода мы приходим в любую вершину (кроме первой) от ее предшественника, и такой предшественник для вершины всегда один, так как мы не добавляем вершину в {\firacodebold nextNodes} больше одного раза. И именно это свойство можно использовать. Для этого сохранения нам понадобится изменить изначальную структуру вершины (листинг \ref{lst:graphStructureSimplePath}), добавив в нее поле {\firacodebold parent} для хранения предшественника.
 
@@ -225,7 +291,7 @@ function traverseGraph() {
         currentNode = nextNodes.pop();
         currentNode.visited = true;
 
-        if (currentNode.data === 'target data') {
+        if (currentNode.data === 'h') {
             return currentNode;
         }
 
@@ -247,20 +313,20 @@ function traverseGraph() {
 
 \end{figure*}
 
-И все таки вернемся к поиску пути от вершины {\firacodebold a} до вершины {\firacodebold h}. Мы начали обходить наш граф в глубину, параллельно строить обратное дерево обхода и в определенный момент дошли до целевой вершины {\firacodebold h}. На этом этапе у нас гарантированно есть выделенная на рисунке \ref{fig:first} часть обратного дерева обхода, так как именно от этих предшественников мы пришли в {\firacodebold h}. Более того, если взять вершину {\firacodebold h} и пройти по ссылкам {\firacodebold parent} вверх, мы получим искомый путь, только в обратном порядке. Изменение, которое необходимо для получения пути в прямом порядке показано на листинге 
+И все таки вернемся к поиску пути от вершины {\firacodebold a} до вершины {\firacodebold h}. Мы начали обходить наш граф в глубину, параллельно строить обратное дерево обхода и в определенный момент дошли до целевой вершины {\firacodebold h}. На этом этапе у нас гарантированно есть выделенная на рисунке \ref{fig:first} часть обратного дерева обхода, так как именно от этих предшественников мы пришли в {\firacodebold h}. Более того, если взять вершину {\firacodebold h} и пройти по ссылкам {\firacodebold parent} вверх, мы получим искомый путь, только в обратном порядке. Изменение, которое необходимо для получения пути в прямом порядке показано на листинге \ref{lst:graphPathConstruction}
 
 \begin{figure*}
     \lstset{
-        emph={},
+        emph={parent},
         emphstyle=\textbf,
         firstnumber=11,
     }
     \begin{ruledelement}
-        \begin{lstlisting}[caption={Обход графа в глубину и формирование обратного дерева обхода}, label={lst:graphDfsParent}]
-// if (currentNode.data === 'target data') {
+        \begin{lstlisting}[caption={Построение пути до найденной вершины}, label={lst:graphPathConstruction}]
+// if (currentNode.data === 'h') {
 //     return currentNode;
 // }
-if (currentNode.data === 'target data') {
+if (currentNode.data === 'h') {
     const pathNode = currentNode;
     const path = [];
 
@@ -276,70 +342,67 @@ if (currentNode.data === 'target data') {
 
 \end{figure*}
 
-\begin{figure*}
+\begin{figure*}[h]
     \centering
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
-            a <- [disabledEdge] b [disabledNode],
-            b <- c [disabledNode],
-            b <- [disabledEdge] d [disabledNode],
-            d <- [disabledEdge] e [disabledNode],
-            f <- g,
-            g <- h,
-            g <- [disabledEdge] i [disabledNode],
-            a <- f,
-            b <- [disabledEdge] c,
-        }
-        \caption{cba}
-        \label{fig:first}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a  <-  {b  <-  {c , d  <-  e }, f  <-  g  <-  {h , i }},
-        }
-        \caption{abc}
-        \label{fig:second}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a [disabledNode] <- [bend left=22] {b [disabledNode] <- [bend left=22] {c [disabledNode], d [disabledNode] <- [bend left=22] e [disabledNode]}, f [disabledNode] <- [bend left=22] g [disabledNode] <- [bend left=22] {h [disabledNode], i [disabledNode]}},
 
-            a -> [disabledEdge] b [disabledNode],
+            a  [disabledNode] -> [disabledEdge] b [disabledNode],
             b -> c [disabledNode],
             b -> [disabledEdge] d [disabledNode],
             d -> [disabledEdge] e [disabledNode],
-            f -> [disabledEdge] g,
-            g -> [disabledEdge] h,
+            f  [disabledNode] -> [disabledEdge] g [disabledNode],
+            g -> [disabledEdge] h [disabledNode],
             g -> [disabledEdge] i [disabledNode],
             a -> [disabledEdge] f,
             b -> [disabledEdge] c,
             i -> [bend right=45, disabledEdge] f,
             c -> [bend left=45, disabledEdge] a,
             h <- [disabledEdge] a,
+
+            h -> [bend left=10] a,
+            i -> [bend right=22] g,
+            g -> [bend right=22] f,
+            f -> [bend right=22] a,
+            e -> [bend right=22] d,
+            d -> [bend right=22] b,
+            c -> [bend right=22] b,
+            b -> [bend right=22] a,
         }
-        \caption{def}
-        \label{fig:third}
+        \caption{Связи {\firacodebold parent}}
+        \label{fig:third1}
     \end{subfigure}
-    \caption{Hbc}
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a  <-  {b  <-  {c , d  <-  e }, f  <-  g},
+            g  <- [invisibleEdge] h,
+            g  <- i,
+            h -> a,
+        }
+        \caption{Обратное дерево обхода}
+        \label{fig:second1}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a <- [disabledEdge] b [disabledNode],
+            b <- c [disabledNode],
+            b <- [disabledEdge] d [disabledNode],
+            d <- [disabledEdge] e [disabledNode],
+            f [disabledNode] <- [disabledEdge] g [disabledNode],
+            g <- [invisibleEdge] h,
+            g <- [disabledEdge] i [disabledNode],
+            a <- [disabledEdge] f,
+            b <- [disabledEdge] c,
+            h -> a,
+        }
+        \caption{Обратный путь}
+        \label{fig:first1}
+    \end{subfigure}
+    \caption{Путь при обходе в ширину}
 \end{figure*}
 
-\begin{figure}[H]
-    \styledgraph{
-        a -> [disabledEdge] b [disabledNode],
-        b -> c [disabledNode],
-        b -> [disabledEdge] d [disabledNode],
-        d -> [disabledEdge] e [disabledNode],
-        f -> g,
-        g -> h,
-        g -> [disabledEdge] i [disabledNode],
-        a -> f,
-        b -> [disabledEdge] c,
-        i -> [bend right=45, disabledEdge] f,
-        c -> [bend left=45, disabledEdge] a,
-        h <- a,
-    }
-    \caption{Пути в графе от {\firacodebold a} к {\firacodebold h}}
-    \label{fig:pathExposure}
-\end{figure}
+Дерево обратного обхода существует и для обхода в ширину, как и восстановление пути, но из-за другого порядка обхода мы можем найти (и в данном пример найдем) совсем другой путь. на рисунке \ref{fig:third1} выделены связи {\firacodebold parent}. В данном случа от обхода в глубину отличие лишь в том, что теперь предшественником вершины {\firacodebold h} является вершина {\firacodebold a}. Отсюда немного другое дерево обратного обхода (рис. \ref{fig:second1}) и другой найденный путь (рис. \ref{fig:first1}).
+
+Интересно то, что с точки зрения количества вершин в найденном пути обход в ширину всегда гарантирует минимальный путь, так как он всегда вначале обходит самые близкие элементы к начальной вершине.
 
 \end{document}
