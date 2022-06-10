@@ -1,0 +1,30 @@
+\documentclass[../article.tex]{subfiles}
+\begin{document}
+
+\sectionabstract{Алгоритм Дейкстры}
+{Мы уже поняли как найти кратчайший путь в не взвешенном графе, но для взвешенного графа само понятие кратчайшего пути отличается, а для его поиска в очередной раз немного изменим нашу структуру и алгоритм.}
+
+Взвешенный граф, это граф, ребра которого имеют вес, то есть некое число, ассоциированное с этим ребром. Кротчайшим путем называют путь, сумма весов всех ребер которого наименьшая из возможных. Иллюстрация этого на рисунке \ref{fig:compareWeightedPaths}.
+
+\begin{figure}
+    \styledgraph{
+        a -> [disabledEdge] b [disabledNode],
+        b -> c [disabledNode],
+        b -> [disabledEdge] d [disabledNode],
+        d -> [disabledEdge] e [disabledNode],
+        f -> [edge label=7, inner sep=1.5pt] g,
+        g -> [edge label=4, near start] h,
+        g -> [disabledEdge] i [disabledNode],
+        a -> [edge label=5] f,
+        b -> [disabledEdge] c,
+        i -> [bend right=45, disabledEdge] f,
+        c -> [bend left=45, disabledEdge] a,
+        h <- [edge label=100] a,
+    }
+    \caption{Пути во взвешенном графе от {\firacodebold a} к {\firacodebold h}}
+    \label{fig:compareWeightedPaths}
+\end{figure}
+
+И хотя длина пути {\firacodebold [a, h]} в количестве ребер меньше, чем у {\firacodebold [a, f, g, h]}, все таки во взвешенном графе путь {\firacodebold [a, f, g, h]} считается короче.
+
+\end{document}
