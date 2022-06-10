@@ -25,6 +25,148 @@
     \label{fig:compareWeightedPaths}
 \end{figure}
 
-И хотя длина пути {\firacodebold [a, h]} в количестве ребер меньше, чем у {\firacodebold [a, f, g, h]}, все таки во взвешенном графе путь {\firacodebold [a, f, g, h]} считается короче.
+И хотя длина пути {\firacodebold [a, h]} в количестве ребер меньше, чем у {\firacodebold [a, f, g, h]}, все таки во взвешенном графе путь {\firacodebold [a, f, g, h]} считается короче, так как длина пути {\firacodebold [a, h]} равна 100 и больше, чем длина пути {\firacodebold [a, f, g, h]}, равная 5 + 7 + 4 = 16.
+
+\subsection{Структура для обхода}
+
+При таком определении кратчайшего пути мы все еще можем использовать как поиск в глубину так и в ширину для нахождения решения. Для этого достаточно найти все пути и выбрать кротчайший. Или чуть проще - при обнаружении очередного целевого пути оставлять в памяти только тот, что короче.
+
+Но прежде всего, надо в очередной раз поменять структуру данных, представляющую граф. Внимательный читатель заметил, что у нас появились веса ребер, но не появилось переменных, чтобы их хранить. До этого момента ребра нас не интересовали и были абсолютно равнозначны между собой, теперь же нам нужно выделить отдельную сущность под это (листинг \ref{lst:weighetGrahStruct}). Про поле {\firacodebold distance} поговорим чуть позже.
+
+\begin{ruledelement}
+    \lstset{
+        emph={edges},
+        emphstyle=\textbf,
+    }
+    \begin{lstlisting}[caption={Структура для взвешенного графа}, label={lst:weighetGrahStruct}]
+interface Edge {
+    weight: number;
+    nextNode: Node;
+    visited?: boolean;
+}
+
+interface Node {
+    data: string;
+    edges: Edge[];
+    distance?: number;
+}
+    \end{lstlisting}
+\end{ruledelement}
+
+При этом, раньше мы не возвращались в одну и ту же вершину и для контроля этого ограничени использовали поле {\firacodebold visited} в {\firacodebold Node}. Но из-за того, что два разных ребра могут вести в одну и ту же вершину и давать разный по длине путь, это ограничение нужно заменить другим - не возвращаться в одно и то же ребро, поэтому флаг {\firacodebold visited} переезжает в структуру {\firacodebold Edge}.
+
+\begin{figure*}[h]
+    \lstset{
+        emph={nextEdge, edges},
+        emphstyle=\textbf,
+    }
+    \begin{ruledelement}
+        \begin{lstlisting}[caption={Поиск пути при обходе взвешенного графа в ширину}, label={lst:bfsWeightedRandomPath}]
+const startingNode = nodeA;
+
+function traverseGraph() {
+    let currentEdge = null;
+    const nextEdges = [...startingNode.edges];
+
+    while (nextEdges.length !== 0) {
+        currentEdge = nextEdges.shift();
+        currentEdge.visited = true;
+
+        const currentNode = currentEdge.nextNode;
+
+        if (currentNode.data === 'h') {
+            let pathNode = currentNode;
+            const path = [];
+
+            while(pathNode) {
+                path.ushift(pathNode);
+                pathNode = pathNode.parent;
+            }
+
+            return path;
+        }
+
+        const edgesToAdd = currentNode.edges
+            .filter(nextEdge => !nextEdge.visited)
+            .map(nextEdge => {
+                nextEdge.nextNode.parent = currentNode;
+
+                return nextEdge.nextNode;
+            });
+
+        nextEdges.push(...edgesToAdd);
+    }
+
+    return null;
+}
+        \end{lstlisting}
+    \end{ruledelement}
+
+\end{figure*}
+
+В этой структуре каждая вершина теперь имеет массив ребер, который выходят из этой вершины, а каждое ребро в этом массиве имеет вес и ссылку на вершину на другом конце ребра. Таким образом массив {\firacodebold neighbors} нам больше не нужен, информация о соседях перенесена в массив {\firacodebold edges}.
+
+\subsection{Обход взвешенного графа}
+
+Конечно, это все тот же граф и концептуально его обход не изменился, но так как поменялась структура данных, то некоторые детали реализации тоже поменялись. Сам обход теперь больше похож на обход ребер, чем вершин. Пример поиска произвольного (не обязательного кратчайшего) пути при обходе в ширину такой структуры показан на листинге \ref{lst:bfsWeightedRandomPath}.
+
+\subsection{Поиск кратчайшего пути}
+
+Теперь осталось лишь научится выбирать кратчайший путь по тому принципу, который был описан выше: запоминать первый найденный путь до целевой вершины и потом заменять его каждым следующим более коротким путем до целевой вершины.
+
+Для этого будем хранить в каждой обойденной вершине расстояние от начальной до текущей в том самом поле {\firacodebold distance}. При этом, так как даже для промежуточных вершин может быть найден более короткий путь в процессе обхода, а не только для целевой, то алгоритм подмены более длинного пути на более короткий будь общий для всех вершин.
+
+Когда же завершить обход? Тут можно порассуждать, но чтобы не переусложнять код, и гарантировать нахождение кратчайшего пути разумно будет завершить обход только тогда, когда обойден весь граф (массив {\firacodebold nextNodes} стал пустым).
+
+Полный код этого алгоритма приведен в листинге \ref{lst:bfsShortesPath}.
+
+\begin{figure*}[h]
+    \lstset{
+        emph={nextEdge, edges},
+        emphstyle=\textbf,
+    }
+    \begin{ruledelement}
+        \begin{lstlisting}[caption={Простой поиск кратчайшего пути}, label={lst:bfsShortesPath}]
+const startingNode = nodeA;
+
+function traverseGraph() {
+    let currentEdge = null;
+    const nextEdges = [...startingNode.edges];
+
+    while (nextEdges.length !== 0) {
+        currentEdge = nextEdges.shift();
+        currentEdge.visited = true;
+
+        const currentNode = currentEdge.nextNode;
+
+        if (currentNode.data === 'h') {
+            let pathNode = currentNode;
+            const path = [];
+
+            while(pathNode) {
+                path.ushift(pathNode);
+                pathNode = pathNode.parent;
+            }
+
+            return path;
+        }
+
+        const edgesToAdd = currentNode.edges
+            .filter(nextEdge => !nextEdge.visited)
+            .map(nextEdge => {
+                nextEdge.nextNode.parent = currentNode;
+
+                return nextEdge.nextNode;
+            });
+
+        nextEdges.push(...edgesToAdd);
+    }
+
+    return null;
+}
+        \end{lstlisting}
+    \end{ruledelement}
+
+\end{figure*}
 
 \end{document}
