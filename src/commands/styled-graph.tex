@@ -22,7 +22,8 @@
                     secondaryColor,
                     pattern=hatch, pattern color={secondaryColor!70}, hatch size=4pt,
                 },
-                invisibleEdge/.style={backgroundColor},
+                invisibleEdge/.style={backgroundColor, text=backgroundColor},
+                invisibleNode/.style={backgroundColor, fill=backgroundColor, text=backgroundColor},
             ]
             { #1 };
             % \draw[->] (b) -- node[midway] {+1} (f);
