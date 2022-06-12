@@ -30,7 +30,6 @@
 
 \begin{document}
 
-
 \begin{titlepage}
     \maketitle
     \begin{abstract}
@@ -40,40 +39,12 @@
     \tableofcontents
 \end{titlepage}
 
-\section{Введение}
-\subsection{Точное введение}
-
 \subfile{sections/introduction}
 \subfile{sections/tree}
 \twocolumnbagebreak
 \subfile{sections/graph}
 \subfile{sections/dijkstra}
 
-\sectionabstract{Hey}{
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut
-    purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis.
-    Curabitur dictum gravida mauris. Nam arcu libero, nonummy
-    eget, consectetuer id, vulputate a, magna. Donec vehicula
-    augue eu neque. Pellentesque habitant morbi tristique senectus
-    et netus et malesuada fames ac turpis egestas. Mauris ut leo.
-    Cras viverra metus rhoncus sem.
-}
-
 \fontweight{\mainfontname}{Black}{Lorem}
-
-\lipsum[1-12]
-
-\tikz \graph
-[
-    spring layout,
-    nodes={circle,draw,ultra thick,backgroundColor,fill=secondaryAccentColor,minimum size=7mm,text=backgroundColor},
-    node distance=1.9cm,
-    visited/.style={fill=accentColor,text=backgroundColor},
-    edges={shorten <=1pt,>={Stealth[round]},semithick,mainColor}
-]
-{
-    abc [visited] -- { b, c, d, e -> {f, g, я} };
-    я -- abc;
-};
 
 \end{document}
