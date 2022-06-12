@@ -1,4 +1,4 @@
-\newcommand{\styledgraph}[1]{
+\newcommand{\styledgraph}[2][1.5cm]{
     \begin{center}
         \begin{tikzpicture}
             \graph [
@@ -8,7 +8,7 @@
                     text=textColor, font=\bfseries,
                     pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
                 },
-                level distance=1.5cm,
+                level distance=#1,
                 edges={
                     shorten <=1pt,>={Stealth[round]},very thick,accentColor, inner sep=0.5pt, font=\bfseries,
                 },
@@ -16,6 +16,7 @@
                 reverseNode/.style={
                     secondaryAccentColor,
                     pattern=hatch, pattern color={secondaryAccentColor!70}, hatch size=4pt,
+                    text=textColor,
                 },
                 disabledEdge/.style={secondaryColor},
                 disabledNode/.style={
@@ -25,7 +26,7 @@
                 invisibleEdge/.style={backgroundColor, text=backgroundColor},
                 invisibleNode/.style={backgroundColor, fill=backgroundColor, text=backgroundColor},
             ]
-            { #1 };
+            { #2 };
             % \draw[->] (b) -- node[midway] {+1} (f);
         \end{tikzpicture}
     \end{center}

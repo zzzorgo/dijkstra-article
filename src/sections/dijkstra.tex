@@ -42,14 +42,15 @@
     \label{fig:compareWeightedPaths}
 \end{figure}
 
-
 И хотя длина пути {\firacodebold [a, h]} в количестве ребер меньше, чем у {\firacodebold [a, f, g, h]}, все таки во взвешенном графе путь {\firacodebold [a, f, g, h]} считается короче, так как длина пути {\firacodebold [a, h]} равна 100 и больше, чем длина пути {\firacodebold [a, f, g, h]}, равная 5 + 7 + 4 = 16.
+
+При таком определении кратчайшего пути мы все еще можем использовать как поиск в глубину так и в ширину для нахождения решения. Для этого достаточно найти все пути и выбрать кротчайший. Или чуть проще – при обнаружении очередного целевого пути оставлять в памяти только тот, что короче.
+
+Но прежде всего, надо в очередной раз поменять структуру данных, представляющую граф. Внимательный читатель заметил, что у нас появились веса ребер, но нет переменных, чтобы их хранить. До этого момента ребра нас не интересовали и были абсолютно равнозначны между собой, теперь же нам нужно выделить отдельную сущность под это (листинг \ref{lst:weighetGrahStruct}).
 
 \subsection{Структура для обхода}
 
-При таком определении кратчайшего пути мы все еще можем использовать как поиск в глубину так и в ширину для нахождения решения. Для этого достаточно найти все пути и выбрать кротчайший. Или чуть проще - при обнаружении очередного целевого пути оставлять в памяти только тот, что короче.
-
-Но прежде всего, надо в очередной раз поменять структуру данных, представляющую граф. Внимательный читатель заметил, что у нас появились веса ребер, но нет переменных, чтобы их хранить. До этого момента ребра нас не интересовали и были абсолютно равнозначны между собой, теперь же нам нужно выделить отдельную сущность под это (листинг \ref{lst:weighetGrahStruct}).
+В этой структуре каждая вершина теперь имеет массив ребер {\firacodebold edges}, которые выходят из этой вершины, а каждое ребро {\firacodebold Edge} в этом массиве имеет вес {\firacodebold weight} и ссылку на вершину на другом конце ребра {\firacodebold nextNode}. Таким образом массив {\firacodebold neighbors} нам больше не нужен, информация о соседях перенесена в массив {\firacodebold edges}.
 
 \begin{ruledelement}
     \lstset{
@@ -71,15 +72,13 @@ interface Node {
     \end{lstlisting}
 \end{ruledelement}
 
-\begin{figure*}[h]
+\begin{figure*}
     \lstset{
         emph={nextEdge, edges},
         emphstyle=\textbf,
     }
     \begin{ruledelement}
         \begin{lstlisting}[caption={Поиск пути при обходе взвешенного графа в ширину}, label={lst:bfsWeightedRandomPath}]
-const startingNode = nodeA;
-
 function traverseGraph() {
     let currentNode = null;
     const nextEdges = [currentNode];
@@ -118,25 +117,7 @@ function traverseGraph() {
 
 \end{figure*}
 
-В этой структуре каждая вершина теперь имеет массив ребер {\firacodebold edges}, которые выходят из этой вершины, а каждое ребро {\firacodebold Edge} в этом массиве имеет вес {\firacodebold weight} и ссылку на вершину на другом конце ребра {\firacodebold nextNode}. Таким образом массив {\firacodebold neighbors} нам больше не нужен, информация о соседях перенесена в массив {\firacodebold edges}.
-
-\subsection{Обход взвешенного графа}
-
-Конечно, это все тот же граф и концептуально его обход не изменился, но так как поменялась структура данных, то некоторые детали реализации тоже поменялись. Пример поиска произвольного (не обязательного кратчайшего) пути при обходе в ширину такой структуры показан на листинге \ref{lst:bfsWeightedRandomPath}.
-
-\subsection{Поиск кратчайшего пути}
-
-Теперь осталось лишь научится выбирать кратчайший путь по тому принципу, который был описан выше: запоминать первый найденный путь до целевой вершины и потом заменять его каждым следующим более коротким путем до целевой вершины.
-
-Если подумать, то чтобы найти кратчайшее расстояние до целевой вершины, нужно знать кратчайшее расстояние до всех вершин-предшественников для целевой, зная эти расстояния, мы можем дальше выбрать самое короткое ребро из ведущих в целевую вершину и завершить поиск. Аналогично, чтобы найти кратчайшее расстояние до всех вершин предшественников нужно знать кратчайшее расстояние до их предшественников и так далее до самого начала обхода. Другими словами, нам нужно посчитать кратчайшие расстояния от начальной вершины до каждой вершины в графе.
-
-Будем хранить эти расстояния в словаре {\firacodebold distances}, где ключем будет {\firacodebold id} текущей вершины, а значением минимальное {\bfseries известное} расстояние от нее до начальной. При этом, так как даже для промежуточных вершин может быть найден более короткий путь в процессе обхода, а не только для целевой, то алгоритм подмены более длинного пути на более короткий будет общим для всех вершин.
-
-Мы не знаем наверняка, а не найдем ли более короткий путь, не обойдя весь граф, поэтому завершаем обход после того как обойден весь граф (массив {\firacodebold nextEdges} стал пустым).
-
-Полный код этого алгоритма приведен в листинге \ref{lst:bfsShortesPath}.
-
-\begin{figure*}[h]
+\begin{figure*}
     \lstset{
         emph={targetNode, newDistance},
         emphstyle=\textbf,
@@ -151,7 +132,7 @@ function traverseGraph() {
     const distances = new Map([[startingNode.id, 0]]);
 
     while (nextEdges.length !== 0) {
-        currentNode = nextEdges.shift();
+        currentNode = nextEdges.shift(); (*\label{code:bfsShortestPath:unshift}*)
         currentNode.visited = true;
 
         if (currentNode.data === 'h') {
@@ -199,6 +180,22 @@ function traverseGraph() {
 
 \end{figure*}
 
+\subsection{Обход взвешенного графа}
+
+Конечно, это все тот же граф и концептуально его обход не изменился, но так как поменялась структура данных, то некоторые детали реализации тоже поменялись. Пример поиска произвольного (не обязательного кратчайшего) пути при обходе в ширину такой структуры показан на листинге \ref{lst:bfsWeightedRandomPath}.
+
+\subsection{Поиск кратчайшего пути}
+
+Теперь осталось лишь научится выбирать кратчайший путь по тому принципу, который был описан выше: запоминать первый найденный путь до целевой вершины и потом заменять его каждым следующим более коротким путем до целевой вершины.
+
+Если подумать, то чтобы найти кратчайшее расстояние до целевой вершины, нужно знать кратчайшее расстояние до всех вершин-предшественников для целевой, зная эти расстояния, мы можем дальше выбрать самое короткое ребро из ведущих в целевую вершину и завершить поиск. Аналогично, чтобы найти кратчайшее расстояние до всех вершин предшественников нужно знать кратчайшее расстояние до их предшественников и так далее до самого начала обхода. Другими словами, нам нужно посчитать кратчайшие расстояния от начальной вершины до каждой вершины в графе.
+
+Будем хранить эти расстояния в словаре {\firacodebold distances}, где ключем будет {\firacodebold id} текущей вершины, а значением минимальное {\bfseries известное} расстояние от нее до начальной. При этом, так как даже для промежуточных вершин может быть найден более короткий путь в процессе обхода, а не только для целевой, то алгоритм подмены более длинного пути на более короткий будет общим для всех вершин.
+
+Мы не знаем наверняка, а не найдем ли более короткий путь, не обойдя весь граф, поэтому завершаем обход после того как обойден весь граф (массив {\firacodebold nextEdges} стал пустым).
+
+Полный код этого алгоритма приведен в листинге \ref{lst:bfsShortestPath}.
+
 % Тут будет объяснение как работает алгоритм
 
 Теперь давайте более подробно изучим код. Первое что изменилось, это момент, в который мы начинаем восстанавливать путь. Так как теперь мы не имеем права досрочно завершать обход в момент когда мы нашли целевую вершину, то мы просто запоминаем ее в отдельную переменную {\firacodebold targetNode} (строки 12-14), как только найдем, а восстановление пути делаем на строках 42-50. Логика не добавления уже посещенных вершин также сохранилась (строки 36-38).
@@ -207,8 +204,8 @@ function traverseGraph() {
 
 Как и прежде, ссылки {\firacodebold parent} формируют обратное дерево обхода, только теперь его форма будут зависеть не только от порядка обхода, как мы видели раньше для обходов в глубину и ширину, но и от весов ребер, так как мы будем "переставлять" ссылку {\firacodebold parent} в зависимости от того, какой {\firacodebold parent} предоставляет более короткий путь.
 
-Раскадровка построения обратного дерева обхода для нашего случая приведена на рисунке \ref{fig:reverseTreeBfsShortestPath}
-% ⁰²³¹⁴⁵⁶⁷⁸⁹
+Раскадровка построения обратного дерева обхода для нашего случая приведена на рисунке \ref{fig:reverseTreeBfsShortestPath}.
+
 \begin{figure*}
     \centering
     \begin{subfigure}{0.32\textwidth}
@@ -218,10 +215,13 @@ function traverseGraph() {
             b -> [invisibleEdge, edge label=2] d [disabledNode],
             d -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
             f [disabledNode] -> [invisibleEdge, edge label=7, inner sep=1.5pt] g [disabledNode],
-            g -> [invisibleEdge, edge label=4, near start] h [disabledNode],
+            g -> [invisibleEdge, edge label=4] h [disabledNode],
             g -> [invisibleEdge, edge label=8] i [disabledNode],
             a⁰ -> [invisibleEdge, edge label=5] f,
         }
+        \caption{Шаг 1}
+        \label{fig:reverseTreeBfsShortestPath1}
+        \vspace*{1cm}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -230,11 +230,14 @@ function traverseGraph() {
             b⁷ -> [invisibleEdge, edge label=2] d [disabledNode],
             d -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
             f⁵ -> [invisibleEdge, edge label=7, inner sep=1.5pt] g [disabledNode],
-            g -> [invisibleEdge, edge label=4, near start] h¹⁰⁰,
+            g -> [invisibleEdge, edge label=4] h¹⁰⁰,
             g -> [invisibleEdge, edge label=8] i [disabledNode],
             a⁰ <- [edge label=5] f⁵,
             h¹⁰⁰ -> [edge label=100] a⁰,
         }
+        \caption{Шаг 2}
+        \label{fig:reverseTreeBfsShortestPath2}
+        \vspace*{1cm}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -243,11 +246,14 @@ function traverseGraph() {
             b⁷ <- [edge label=2] d⁹,
             d⁹ -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
             f⁵ -> [invisibleEdge, edge label=7, inner sep=1.5pt] g [disabledNode],
-            g -> [invisibleEdge, edge label=4, near start] h¹⁰⁰,
+            g -> [invisibleEdge, edge label=4] h¹⁰⁰,
             g -> [invisibleEdge, edge label=8] i [disabledNode],
             a⁰ <- [edge label=5] f⁵,
             h¹⁰⁰ -> [edge label=100] a⁰,
         }
+        \caption{Шаг 3}
+        \label{fig:reverseTreeBfsShortestPath3}
+        \vspace*{1cm}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -256,11 +262,13 @@ function traverseGraph() {
             b⁷ <- [edge label=2] d⁹,
             d⁹ -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
             f⁵ <- [edge label=7, inner sep=1.5pt] g¹²,
-            g¹² -> [invisibleEdge, edge label=4, near start] h¹⁰⁰,
+            g¹² -> [invisibleEdge, edge label=4] h¹⁰⁰,
             g¹² -> [invisibleEdge, edge label=8] i [disabledNode],
             a⁰ <- [edge label=5] f⁵,
             h¹⁰⁰ -> [edge label=100] a⁰,
         }
+        \caption{Шаг 4}
+        \label{fig:reverseTreeBfsShortestPath4}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -269,11 +277,13 @@ function traverseGraph() {
             b⁷ <- [edge label=2] d⁹,
             d⁹ <- [edge label=1, inner sep=1.5pt] c¹⁶,
             f⁵ <- [edge label=7, inner sep=1.5pt] g¹²,
-            g¹² -> [invisibleEdge, edge label=4, near start] h¹⁰⁰,
+            g¹² -> [invisibleEdge, edge label=4] h¹⁰⁰,
             g¹² -> [invisibleEdge, edge label=8] i [disabledNode],
             a⁰ <- [edge label=5] f⁵,
             h¹⁰⁰ -> [edge label=100] a⁰,
         }
+        \caption{Шаг 5}
+        \label{fig:reverseTreeBfsShortestPath5}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -282,14 +292,144 @@ function traverseGraph() {
             b⁷ <- [edge label=2] d⁹,
             d⁹ <- [edge label=1, inner sep=1.5pt] c¹⁶,
             f⁵ <- [edge label=7, inner sep=1.5pt] g¹²,
-            g¹² <- [edge label=4, near start] h¹⁶,
+            g¹² <- [edge label=4] h¹⁶,
             g¹² <- [edge label=8] i²⁰,
             a⁰ <- [edge label=5] f⁵,
-            % h¹⁰⁰ -> [edge label=100] a⁰,
         }
+        \caption{Шаг 6}
+        \label{fig:reverseTreeBfsShortestPath6}
     \end{subfigure}
     \caption{Раскадровка обратного дерева обхода}
     \label{fig:reverseTreeBfsShortestPath}
 \end{figure*}
+
+С первого взгляда кажется, что все работает, мы действительно нашли кратчайший путь для нашего графа ({\firacodebold[a, f, g, h]} длиной 16). Но на самом деле алгоритм в общем случае использовать нельзя, так он не дает гарантированного результата.
+
+Давайте добавим ровно одну вершину и два ребра в наш граф (рис. \ref{fig:exposeBfsError}) и посмотрим на шаг 4 алгоритма внимательнее (рис. \ref{fig:exposeBfsErrorStep}). Предположим что мы ищем путь от {\firacodebold a} к {\firacodebold j}.
+
+\begin{figure}
+    \styledgraph{
+        a -> [edge label=7] b,
+        b -> [edge label=11, inner sep=1pt] c,
+        b -> [edge label=2] d,
+        d -> [edge label=1, inner sep=1.5pt] e,
+        f -> [edge label=7, inner sep=1.5pt] g,
+        g -> [edge label=4, near start] h,
+        g -> [edge label=8] i,
+        a -> [edge label=5] f,
+        i -> [bend right=45, edge label=10] f,
+        c -> [bend left=45, edge label=5] a,
+        h <- [edge label=100] a,
+        h -> [edge label=2, inner sep=2.5pt] j,
+        i -> [edge label=50, inner sep=2.5pt] j,
+    }
+    \caption{Еще один пример графа}
+    \label{fig:exposeBfsError}
+\end{figure}
+
+\begin{figure*}
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a⁰ <- [edge label=7] b⁷,
+            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
+            b⁷ <- [edge label=2] d⁹,
+            d⁹ -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
+            f⁵ -> [invisibleEdge, edge label=7, inner sep=1.5pt] g [disabledNode],
+            g -> [invisibleEdge, edge label=4] h¹⁰⁰,
+            g -> [invisibleEdge, edge label=8] i [disabledNode],
+            a⁰ <- [edge label=5] f⁵,
+            h¹⁰⁰ -> [edge label=100] a⁰,
+            j¹⁰² -> [edge label=2, inner sep=2.5pt] h¹⁰⁰,
+            i -> [invisibleEdge, edge label=50, inner sep=2.5pt] j¹⁰²,
+        }
+        \caption{Еще один пример графа}
+        \label{fig:exposeBfsErrorStep}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a⁰ <- [edge label=7] b⁷,
+            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
+            b⁷ <- [edge label=2] d⁹,
+            d⁹ <- [edge label=1, inner sep=1.5pt] c¹⁶,
+            f⁵ <- [edge label=7, inner sep=1.5pt] g¹²,
+            g¹² -> [invisibleEdge, edge label=4] h¹⁶,
+            g¹² <- [edge label=8] i²⁰,
+            a⁰ <- [edge label=5] f⁵,
+            g¹² <- [edge label=4] h¹⁶,
+            j¹⁰² [reverseNode] -> [reverseEdge, edge label=2, inner sep=2.5pt] h¹⁶,
+            i²⁰ -> [invisibleEdge, edge label=50, inner sep=2.5pt] j¹⁰²,
+        }
+        \caption{Еще один пример графа}
+        \label{fig:exposeBfsErrorStep2}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \styledgraph{
+            a⁰ <- [edge label=7] b⁷,
+            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
+            b⁷ <- [edge label=2] d⁹,
+            d⁹ <- [edge label=1, inner sep=1.5pt] c¹⁶,
+            f⁵ <- [edge label=7, inner sep=1.5pt] g¹²,
+            g¹² -> [invisibleEdge, edge label=4] h¹⁶,
+            g¹² <- [edge label=8] i²⁰,
+            a⁰ <- [edge label=5] f⁵,
+            g¹² <- [edge label=4] h¹⁶,
+            j⁷⁰ [reverseNode] -> [invisibleEdge, edge label=2, inner sep=2.5pt] h¹⁶,
+            i²⁰ <- [reverseEdge, edge label=50, inner sep=2.5pt] j⁷⁰,
+        }
+        \caption{Еще один пример графа}
+        \label{fig:exposeBfsErrorStep3}
+    \end{subfigure}
+\end{figure*}
+
+
+На рисунке \ref{fig:exposeBfsErrorStep} кратчайший и единственный путь от от {\firacodebold a} к {\firacodebold j} имеет длину 102. Если теперь перейти к шагу 6 (рис. \ref{fig:exposeBfsErrorStep2}) То мы увидим, что кратчайший путь до вершины {\firacodebold h} обновится, как и для предыдущего графа, но вот для верины {\firacodebold j} нет, так как мы не написали для это специально логики. То есть в словаре distance все еще записано 102 как кротчайший путь до вершины {\firacodebold j}. И если теперь перейти к последнему (седьмому) шагу то мы увидим картину на рисунке \ref{fig:exposeBfsErrorStep3}. Так как 102 (сохраненный кротчайший путь до вершины j) меньше чем 70 (текущий путь), то мы обновляем его в словаре distance и подменяем {\firacodebold parent}, в результате получая более длинный путь {\firacodebold [j, i, g, f, a]} = 70, чем могли бы ({\firacodebold [j, h, ,g, f, a]} = 18).
+
+\subsection{Верный алгоритм}
+
+Это последний шаг нашей трансформации алгоритма, когда он станет собственно алгоритмом Дейкстры, и будет лишен недостатка, описанного выше. И все что мы сделаем в этот раз, это изменим порядок обхода!
+
+До этого мы реализовали обход в ширину, и как видно он не гарантирует правильного решения. Но если мы будем доставать из массива {\firacodebold nextNodes} (строка \ref{code:bfsShortestPath:unshift} в листинге \ref{lst:bfsShortestPath}) не самый первый элемент, а тот, который имеет минимальное расстояние до начальной вершины (соответствующие расстояния записаны в словаре {\firacodebold distances}), то мы получим алгоритм Дейкстры.
+
+\begin{figure*}
+    \begin{ruledelement}
+        \lstset{
+            emph={getNodeFromQueue, currentNode},
+            emphstyle=\textbf,
+        }
+        \begin{lstlisting}[caption={Отличие алгоритма дейкстры}, label={lst:dijkstraDiffBfs}]
+// take the shortest sub-path in the `nextNodes`
+function getNodeFromQueue(nextNodes, distances) {
+    let nextNodeId = null;
+    let resultIndex = -1;
+
+    for (let i = 0; i < nextNodes.length; i++) {
+        if (distances.get(nextNodes[i].id) < distances.get(nextNodeId)) {
+            nextNodeId = nextNodes[i].id;
+            resultIndex = i;
+        }
+    }
+
+    const [nextNode] = nextNodes.splice(resultIndex, 1);
+
+    return nextNode;
+}
+
+// ...
+
+// currentNode = nextEdges.shift();
+currentNode = getNodeFromQueue(nextNodes, distances);
+        \end{lstlisting}
+    \end{ruledelement}
+\end{figure*}
+
+Аналогичное поведение достигается заменой массива nextNodes на очередь с приоритетом, но так в JavaScript нет готовой структуры для этого, проще, с точки зрения реализации, написать функцию вынимающую наиболее приоритетный элемент из обычного массива.
+
+\subsection{Доказательство верности}
+
+Мы уже увидели, что кажущийся с первого взгляда верный алгоритм, может так и не быть. К счастью, алгоритм Дейкстры имеет доказательство.
+
+Прежде чем перейти к формальному доказательству, можно заметить, что проблема, описанная для первого алгоритма, показанного в листинге \ref{lst:bfsShortestPath}, заключалась в том, что мы попали в вершину h по более дилнному пути [a, h] раньше, чем по более короткому [a, f, g, h], и из-за этого словарь distances перестал быть валидным хранилищем кратчайших расстояний от начальной вершины до любой другой обойденной вершины, а алгоритм Дейкстры исключает такую возможность.
+
+Нам достаточно доказать, что на любом этапе обхода словарь distances хранит кратчайший путь до любой вершины. На нулевом шаге мы добавляем начальную вершину с расстоянием до нее самой равным 0 и в верности этого сомневаться не приходиться.
 
 \end{document}
