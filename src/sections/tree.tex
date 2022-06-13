@@ -27,7 +27,7 @@ const treeRoot: Node = // ...
 
 Здесь {\firacodebold data} это некая полезная нагрузка некого элемента (деревья, как и любая другая структура данных должны что-то хранить), а {\firacodebold children} – массив всех непосредственных потомков этого элемента. Каждый потомок это тоже элемент типа {\firacodebold Node} со своими данными и потомками. Так и выстраивается структура дерева как на рисунке \ref{fig:exampleTree}.
 
-\begin{figure}[t!]
+\begin{figure}
     \styledgraph{
         treeRoot -- { / -- { / , / -- / }, / -- / -- { / , / }}
     }
@@ -38,42 +38,45 @@ const treeRoot: Node = // ...
 
     \begin{ruledelement}
         \begin{lstlisting}[caption={Пример {\firacodebold treeRoot}}, label={lst:treeJson}]
-const node9 = {
-    data: '9',
+const i = {
+    data: 'i',
     children: [],
 };
-const node8 = {
-    data: '8',
+const h = {
+    data: 'h',
     children: [],
 };
-const node7 = {
-    data: '7',
+const e = {
+    data: 'e',
     children: [],
 };
-const node6 = {
-    data: '6',
-    children: [node8, node9],
+const g = {
+    data: 'g',
+    children: [h, i],
 };
-const node5 = {
-    data: '5',
-    children: [node7],
+
+const d = {
+    data: 'd',
+    children: [e],
 };
-const node4 = {
-    data: '4',
+const c = {
+    data: 'c',
     children: [],
 };
-const node3 = {
-    data: '3',
-    children: [node6],
+const f = {
+    data: 'f',
+    children: [g],
 };
-const node2 = {
-    data: '2',
-    children: [node4, node5],
+const b = {
+    data: 'b',
+    children: [c, d],
 };
-const treeRoot = {
-    data: '1',
-    children: [node2, node3],
+const a = {
+    data: 'a',
+    children: [b, f],
 };
+
+const treeRoot = a;
         \end{lstlisting}
     \end{ruledelement}
 
@@ -86,20 +89,13 @@ const treeRoot = {
 
 Обход происходит последовательно, в каждой итерации обхода мы исследуем ровно один элемент. Вопрос только в том, откуда мы его берем? Ну что ж, первый элемент у нас уже есть, это {\firacodebold treeRoot} или корень дерева. Исследовав его мы можем начать исследовать всех его потомков, а затем потомков этих потомков и так далее, пока не найдем требуемый элемент или не переберем все элементы.
 
-\begin{strip}
+\begin{figure*}
     \lstset{
         emph={traverseTree},
         emphstyle=\textbf,
     }
-    \begin{topruledelement}
+    \begin{ruledelement}
         \begin{lstlisting}[caption={Обход дерева в глубину}, label={lst:treeDfs}]
-interface Node {
-  data: string;
-  children: Node[];
-}
-
-const treeRoot: Node = // ...
-
 function traverseTree() {
     let currentNode = null;
     const nextNodes = [treeRoot];
@@ -116,10 +112,9 @@ function traverseTree() {
 
     return null;
 }
-
         \end{lstlisting}
-    \end{topruledelement}
-\end{strip}
+    \end{ruledelement}
+\end{figure*}
 
 Именно этот алгоритм и записан в листинге \ref{lst:treeDfs}. До начала выполнения основного цикла на строке 12 мы инициализируем массив {\firacodebold nextNodes} (стока 10). Туда мы будем класть все элементы, которые мы хотим обойти. На данный у нас есть только корень дерева, его и кладем. Строга говоря, {\firacodebold nextNodes} в данном примере исполняет роль не столько массива, сколько {\firacodebold стека}.
 
@@ -161,22 +156,13 @@ function traverseTree() {
 \subsection{Вместо заключения}
 Наверняка вам сейчас захотелось попробовать этот код самим, и это отличная идея. Правда, помимо функции обхода дерева нужно еще и само дерево, формирование которого может быть утомительным. Поэтому ниже в листинге \ref{lst:treeJson} приведен пример дерева, которое можно скопировать к себе в код. Его структура и нейминг соответствует той, что на рисунке \ref{fig:treeBfsOrder}.
 
-% \twocolumnbagebreak
-
-\begin{strip}
+\begin{figure*}
     \lstset{
         emph={shift},
         emphstyle=\textbf,
     }
     \begin{ruledelement}
         \begin{lstlisting}[caption={Обход дерева в ширину}, label={lst:treeBfs}]
-interface Node {
-  data: string;
-  children: Node[];
-}
-
-const treeRoot: Node = // ...
-
 function traverseTree() {
     let currentNode = null;
     const nextNodes = [treeRoot];
@@ -196,5 +182,5 @@ function traverseTree() {
 
         \end{lstlisting}
     \end{ruledelement}
-\end{strip}
+\end{figure*}
 \end{document}

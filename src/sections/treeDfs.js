@@ -1,39 +1,41 @@
-const node9 = {
-    data: '9',
+const i = {
+    data: 'i',
     children: [],
 };
-const node8 = {
-    data: '8',
+const h = {
+    data: 'h',
     children: [],
 };
-const node7 = {
-    data: '7',
+const e = {
+    data: 'e',
     children: [],
 };
-const node6 = {
-    data: '6',
-    children: [node8, node9],
+const g = {
+    data: 'g',
+    children: [h, i],
 };
-const node5 = {
-    data: '5',
-    children: [node7],
+const d = {
+    data: 'd',
+    children: [e],
 };
-const node4 = {
-    data: 'target data',
+const c = {
+    data: 'c',
     children: [],
 };
-const node3 = {
-    data: '3',
-    children: [node6],
+const f = {
+    data: 'f',
+    children: [g],
 };
-const node2 = {
-    data: '2',
-    children: [node4, node5],
+const b = {
+    data: 'b',
+    children: [c, d],
 };
-const treeRoot = {
-    data: '1',
-    children: [node2, node3],
+const a = {
+    data: 'a',
+    children: [b, f],
 };
+
+const treeRoot = a;
 
 function traverseTree() {
     let currentNode = null;

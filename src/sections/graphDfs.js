@@ -1,42 +1,42 @@
-const nodeI = {
+const i = {
     data: 'i',
     neighbors: [],
 };
-const nodeH = {
+const h = {
     data: 'h',
     neighbors: [],
 };
-const nodeE = {
+const e = {
     data: 'e',
     neighbors: [],
 };
-const nodeG = {
+const g = {
     data: 'g',
-    neighbors: [nodeH, nodeI],
+    neighbors: [h, i],
 };
-const nodeD = {
+const d = {
     data: 'd',
-    neighbors: [nodeE],
+    neighbors: [e],
 };
-const nodeC = {
+const c = {
     data: 'c',
     neighbors: [],
 };
-const nodeF = {
+const f = {
     data: 'f',
-    neighbors: [nodeG],
+    neighbors: [g],
 };
-const nodeB = {
+const b = {
     data: 'b',
-    neighbors: [nodeC, nodeD],
+    neighbors: [c, d],
 };
-const nodeA = {
+const a = {
     data: 'a',
-    neighbors: [nodeB, nodeF],
+    neighbors: [b, f],
 };
 
 
-const startingNode = nodeA;
+const startingNode = a;
 
 function traverseGraph() {
     let currentNode = null;
