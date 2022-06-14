@@ -424,12 +424,62 @@ currentNode = getNodeFromQueue(nextNodes, distances);
 
 Аналогичное поведение достигается заменой массива nextNodes на очередь с приоритетом, но так в JavaScript нет готовой структуры для этого, проще, с точки зрения реализации, написать функцию вынимающую наиболее приоритетный элемент из обычного массива.
 
+\begin{figure}
+    \begin{tikzpicture}
+    \begin{scope}[
+        every node/.style={
+            circle, draw, very thick, accentColor, minimum size=9mm,
+            text=textColor, font=\bfseries,
+            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
+        },
+        reverseEdge/.style={secondaryAccentColor},
+        reverseNode/.style={
+            secondaryAccentColor,
+            pattern=hatch, pattern color={secondaryAccentColor!70}, hatch size=4pt,
+            text=textColor,
+        },
+        disabledEdge/.style={secondaryColor},
+        disabledNode/.style={
+            secondaryColor,
+            pattern=hatch, pattern color={secondaryColor!70}, hatch size=4pt,
+        },
+        invisibleEdge/.style={backgroundColor, text=backgroundColor},
+        invisibleNode/.style={backgroundColor, fill=backgroundColor, text=backgroundColor},
+        clearNode/.style={draw=none, fill=none},
+    ]
+        \graph [
+            layered layout,
+            sibling distance=2cm,
+            edges={
+                shorten <=1pt,>={Stealth[round]},very thick,accentColor, inner sep=0.5pt, font=\bfseries,
+            },
+        ] {
+            start -> { a -> [disabledEdge] b [disabledNode] -> [disabledEdge] c [disabledNode] -> [disabledEdge] d [disabledNode] -> [disabledEdge] end, end},
+            start -> end;
+
+            { [same layer] start, end };
+            { [same layer] a, b, c, d };
+        };
+        \begin{scope}[node distance=10pt]
+            \node [below=of d, minimum size=5pt] (abc) {};
+            \node [right=of abc, minimum size=5pt, clearNode] {рассматриваемая};
+            \node [below=of abc, minimum size=5pt, disabledNode] (bca) {};
+            \node [right=of bca, minimum size=5pt, clearNode] {гипотетическая};
+            \node [below=of bca, minimum size=5pt, reverseNode] (hhh) {};
+            \node [right=of hhh, minimum size=5pt, clearNode] {активная};
+        \end{scope}
+    \end{scope}
+    \end{tikzpicture}
+    \caption{Пути во взвешенном графе от {\firacodebold a} к {\firacodebold h}}
+    \label{fig:dijkstraProve}
+\end{figure}
+
 \subsection{Доказательство верности}
 
 Мы уже увидели, что кажущийся с первого взгляда верный алгоритм, может так и не быть. К счастью, алгоритм Дейкстры имеет доказательство.
 
-Прежде чем перейти к формальному доказательству, можно заметить, что проблема, описанная для первого алгоритма, показанного в листинге \ref{lst:bfsShortestPath}, заключалась в том, что мы попали в вершину h по более дилнному пути [a, h] раньше, чем по более короткому [a, f, g, h], и из-за этого словарь distances перестал быть валидным хранилищем кратчайших расстояний от начальной вершины до любой другой обойденной вершины, а алгоритм Дейкстры исключает такую возможность.
+Прежде чем перейти к формальному доказательству, можно заметить, что проблема, описанная для первого алгоритма, показанного в листинге \ref{lst:bfsShortestPath}, заключалась в том, что мы попали в вершину h по более дилнному пути [a, h] раньше, чем по более короткому [a, f, g, h], и из-за того, что словарь distances перестал быть валидным хранилищем кратчайших расстояний от начальной вершины до любой другой обойденной вершины, а алгоритм Дейкстры исключает такую возможность. Если мы всегда попадаем в кратчайший путь от начальной вершины, до любой другой, то алгоритм работает верно.
 
-Нам достаточно доказать, что на любом этапе обхода словарь distances хранит кратчайший путь до любой вершины. На нулевом шаге мы добавляем начальную вершину с расстоянием до нее самой равным 0 и в верности этого сомневаться не приходиться.
+Выбирая следующую вершину для обхода из nextNodes, мы по сути выбираем следующий путь, от которого мы продолжим анализ. Предположим, в какой-то момент алгоритм совершил ошибку и вначале попал в вершину end по более длинному пути PathY, чем тот, который еще не открыт (PathX). Это означало бы, что PathX включает в себя как минимум один из уже открытых путей., но все открытые пути по определению алгоритма должны быть длиннее PathY (на каждом этапе мы всегда выбираем самый короткий путь), значит PathX должен включать в себя путь, более длинный чем PathY, что означает, что PathX не может быть короче PathY. Следовательно, и совершение алгоритмом ошибки невозможно.
 
 \end{document}

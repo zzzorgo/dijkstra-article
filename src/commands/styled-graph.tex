@@ -1,14 +1,15 @@
-\newcommand{\styledgraph}[2][1.5cm]{
+\newcommandx{\styledgraph}[3][1=1.5cm, 2=tree layout]{
     \begin{center}
         \begin{tikzpicture}
             \graph [
-                tree layout,
+                #2,
                 nodes={
                     circle, draw, very thick, accentColor, minimum size=9mm,
                     text=textColor, font=\bfseries,
                     pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
                 },
                 level distance=#1,
+                node distance=#1,
                 edges={
                     shorten <=1pt,>={Stealth[round]},very thick,accentColor, inner sep=0.5pt, font=\bfseries,
                 },
@@ -26,7 +27,7 @@
                 invisibleEdge/.style={backgroundColor, text=backgroundColor},
                 invisibleNode/.style={backgroundColor, fill=backgroundColor, text=backgroundColor},
             ]
-            { #2 };
+            { #3 };
             % \draw[->] (b) -- node[midway] {+1} (f);
         \end{tikzpicture}
     \end{center}
