@@ -427,10 +427,13 @@ currentNode = getNodeFromQueue(nextNodes, distances);
 \begin{figure}
     \begin{tikzpicture}
     \begin{scope}[
-        every node/.style={
+        baseNode/.style={
             circle, draw, very thick, accentColor, minimum size=9mm,
             text=textColor, font=\bfseries,
             pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
+        },
+        every edge/.style={
+            draw, shorten <=1pt,>={Stealth[round]},very thick,accentColor, inner sep=0.5pt, font=\bfseries,
         },
         reverseEdge/.style={secondaryAccentColor},
         reverseNode/.style={
@@ -445,29 +448,93 @@ currentNode = getNodeFromQueue(nextNodes, distances);
         },
         invisibleEdge/.style={backgroundColor, text=backgroundColor},
         invisibleNode/.style={backgroundColor, fill=backgroundColor, text=backgroundColor},
-        clearNode/.style={draw=none, fill=none},
+        dashedPath/.style={densely dashed},
     ]
-        \graph [
-            layered layout,
-            sibling distance=2cm,
-            edges={
-                shorten <=1pt,>={Stealth[round]},very thick,accentColor, inner sep=0.5pt, font=\bfseries,
-            },
-        ] {
-            start -> { a -> [disabledEdge] b [disabledNode] -> [disabledEdge] c [disabledNode] -> [disabledEdge] d [disabledNode] -> [disabledEdge] end, end},
-            start -> end;
+        \begin{scope}[local bounding box=graph1]
+            \graph [
+                spring layout,
+                sibling distance=2cm,
+                node distance=2cm,
+                nodes={baseNode},
+            ] {
+                start [reverseNode] -> [reverseEdge, edge label=50] b,
+                start [reverseNode] -> [reverseEdge, edge label=10] c [reverseNode],
+                c [reverseNode] -> [reverseEdge, edge label=20] a,
+                c -> [reverseEdge, edge label=10] end,
 
-            { [same layer] start, end };
-            { [same layer] a, b, c, d };
-        };
-        \begin{scope}[node distance=10pt]
-            \node [below=of d, minimum size=5pt] (abc) {};
-            \node [right=of abc, minimum size=5pt, clearNode] {рассматриваемая};
-            \node [below=of abc, minimum size=5pt, disabledNode] (bca) {};
-            \node [right=of bca, minimum size=5pt, clearNode] {гипотетическая};
-            \node [below=of bca, minimum size=5pt, reverseNode] (hhh) {};
-            \node [right=of hhh, minimum size=5pt, clearNode] {активная};
+                b -> [disabledEdge, dashedPath] e [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] f [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] g [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] end,
+        
+                a -> [disabledEdge, dashedPath] cc [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] d [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] end,
+                end,
+            };
+            % \node[inner sep=0pt, ellipse,fit=(start) (c) (end)] {};
+            % \begin{scope}[
+            %     transparency group,
+            %     opacity=0.10,
+            % ]
+            %     \draw [
+            %         line width=1.2cm,
+            %         {Round Cap []}-{Round Cap []},
+            %         draw=accentColor,
+            %     ]
+            %     (node cs:name=start, anchor=center)
+            %         -- (node cs:name=c, anchor=center)
+            %         -- (node cs:name=end, anchor=center);
+            % \end{scope}
+            % \begin{scope}[
+            %     transparency group,
+            %     opacity=0.20,
+            % ]
+            %     \draw [
+            %         line width=3mm,
+            %         {Round Cap []}-{Round Cap []. Fast Round[] Fast Round[]},
+            %         rounded corners,
+            %         draw=secondaryAccentColor,
+            %     ]
+            %     (node cs:name=start, anchor=center)
+            %         -- (node cs:name=c, anchor=center)
+            %         -- (node cs:name=a, anchor=center)
+            %         -- (node cs:name=c, anchor=center)
+            %         -- (node cs:name=d, anchor=center)
+            %         -- (node cs:name=end, anchor=center);
+            % \end{scope}
+            % \begin{scope}[
+            %     transparency group,
+            %     opacity=0.20,
+            % ]
+            %     \draw [
+            %         line width=1.2cm,
+            %         {Round Cap []}-{Round Cap []},
+            %         rounded corners,
+            %         draw=secondaryColor,
+            %     ]
+            %     (node cs:name=start, anchor=center)
+            %         -- (node cs:name=b, anchor=center)
+            %         -- (node cs:name=e, anchor=center)
+            %         -- (node cs:name=f, anchor=center)
+            %         -- (node cs:name=g, anchor=center)
+            %         -- (node cs:name=end, anchor=center);
+            % \end{scope}
+                %     \node (GG) at (node cs:name=end) {};
+                %     \node (GG) at (node cs:name=c) {};
         \end{scope}
+
+        \tikzset{pics/centered/.style={code={
+            \begin{scope}[
+                node distance=7pt,
+            ]
+                \node [baseNode, below=1cm of graph1.south, minimum size=5pt] (abc) {};
+                \node [right=5pt of abc, font=\footnotesize] {добавленные в {\firacodebold distances}};
+                \node [baseNode, below=of abc, minimum size=5pt, disabledNode] (bca) {};
+                \node [right=5pt of bca,font=\footnotesize] {части возможного {\firacodebold PathX}};
+                \node [baseNode, below=of bca, minimum size=5pt, reverseNode] (hhh) {};
+                \node [right=5pt of hhh, font=\footnotesize] {посещенные ({\firacodebold visited = true})};
+            \end{scope}
+        }}}
+
+        \matrix[at={(graph1.south)}] {
+            \pic {centered};\\
+        };
     \end{scope}
     \end{tikzpicture}
     \caption{Пути во взвешенном графе от {\firacodebold a} к {\firacodebold h}}
@@ -478,8 +545,8 @@ currentNode = getNodeFromQueue(nextNodes, distances);
 
 Мы уже увидели, что кажущийся с первого взгляда верный алгоритм, может так и не быть. К счастью, алгоритм Дейкстры имеет доказательство.
 
-Прежде чем перейти к формальному доказательству, можно заметить, что проблема, описанная для первого алгоритма, показанного в листинге \ref{lst:bfsShortestPath}, заключалась в том, что мы попали в вершину h по более дилнному пути [a, h] раньше, чем по более короткому [a, f, g, h], и из-за того, что словарь distances перестал быть валидным хранилищем кратчайших расстояний от начальной вершины до любой другой обойденной вершины, а алгоритм Дейкстры исключает такую возможность. Если мы всегда попадаем в кратчайший путь от начальной вершины, до любой другой, то алгоритм работает верно.
+Прежде чем перейти к формальному доказательству, можно заметить, что проблема, описанная для первого алгоритма, показанного в листинге \ref{lst:bfsShortestPath}, заключалась в том, что мы попали в вершину h по более длинному пути [a, h] раньше, чем по более короткому [a, f, g, h], и из-за того, что словарь distances перестал быть валидным хранилищем кратчайших расстояний от начальной вершины до любой другой обойденной вершины в графе, а алгоритм Дейкстры исключает такую возможность.
 
-Выбирая следующую вершину для обхода из nextNodes, мы по сути выбираем следующий путь, от которого мы продолжим анализ. Предположим, в какой-то момент алгоритм совершил ошибку и вначале попал в вершину end по более длинному пути PathY, чем тот, который еще не открыт (PathX). Это означало бы, что PathX включает в себя как минимум один из уже открытых путей., но все открытые пути по определению алгоритма должны быть длиннее PathY (на каждом этапе мы всегда выбираем самый короткий путь), значит PathX должен включать в себя путь, более длинный чем PathY, что означает, что PathX не может быть короче PathY. Следовательно, и совершение алгоритмом ошибки невозможно.
+Выбирая следующую вершину для обхода из nextNodes, мы по сути выбираем следующий путь, от которого мы продолжим анализ. Предположим, в какой-то момент алгоритм совершил ошибку и вначале попал в вершину end по более длинному пути PathY, чем тот, который еще не открыт (PathX). Это означало бы, что PathX включает в себя как минимум один из уже открытых путей, но все открытые пути по определению алгоритма должны быть длиннее PathY (на каждом этапе мы всегда выбираем самый короткий путь), значит PathX должен включать в себя путь, более длинный чем PathY, что означает, что PathX не может быть короче PathY. Следовательно, и совершение алгоритмом ошибки невозможно.
 
 \end{document}
