@@ -38,7 +38,7 @@ const a = {
 
 const startingNode = a;
 
-function traverseGraph() {
+function traverseGraphDfs() {
     let currentNode = null;
     const nextNodes = [startingNode];
 
@@ -59,5 +59,3 @@ function traverseGraph() {
 
     return null;
 }
-
-traverseGraph()

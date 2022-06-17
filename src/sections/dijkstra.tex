@@ -4,7 +4,7 @@
 \sectionabstract{Алгоритм Дейкстры}
 {Мы уже поняли как найти кратчайший путь в не взвешенном графе, но для взвешенного графа само понятие кратчайшего пути отличается, а для его поиска в очередной раз немного изменим нашу структуру и алгоритм.}
 
-Взвешенный граф, это граф, ребра которого имеют вес, то есть некое число, ассоциированное с этим ребром. Кротчайшим путем называют путь, сумма весов всех ребер которого наименьшая из возможных. Иллюстрация этого на рисунке \ref{fig:compareWeightedPaths}.
+Взвешенный граф, это граф, ребра которого имеют вес, то есть некое число, ассоциированное с этим ребром (рис. \ref{fig:weightedGraphExample}). Кротчайшим путем называют путь, сумма весов всех ребер которого наименьшая из возможных. Иллюстрация этого на рисунке \ref{fig:compareWeightedPaths}.
 
 \begin{figure}
     \styledgraph{
@@ -21,7 +21,7 @@
         h <- [edge label=100] a,
     }
     \caption{Пример взвешенного графа}
-    % \label{fig:compareWeightedPaths}
+    \label{fig:weightedGraphExample}
 \end{figure}
 
 \begin{figure}
@@ -44,9 +44,9 @@
 
 И хотя длина пути {\firacodebold [a, h]} в количестве ребер меньше, чем у {\firacodebold [a, f, g, h]}, все таки во взвешенном графе путь {\firacodebold [a, f, g, h]} считается короче, так как длина пути {\firacodebold [a, h]} равна 100 и больше, чем длина пути {\firacodebold [a, f, g, h]}, равная 5 + 7 + 4 = 16.
 
-При таком определении кратчайшего пути мы все еще можем использовать как поиск в глубину так и в ширину для нахождения решения. Для этого достаточно найти все пути и выбрать кротчайший. Или чуть проще – при обнаружении очередного целевого пути оставлять в памяти только тот, что короче.
+При таком определении кратчайшего пути мы уже не можем сказать, что поиск в глубину или поиск в ширину даст нам кратчайший путь, так как кратчайший путь теперь зависит не только от графа, но и от веса ребер (хотя в данном примере именно обход в глубину даст кратчайший путь, но это просто совпадение).
 
-Но прежде всего, надо в очередной раз поменять структуру данных, представляющую граф. Внимательный читатель заметил, что у нас появились веса ребер, но нет переменных, чтобы их хранить. До этого момента ребра нас не интересовали и были абсолютно равнозначны между собой, теперь же нам нужно выделить отдельную сущность под это (листинг \ref{lst:weighetGrahStruct}).
+Прежде всего, надо в очередной раз поменять структуру данных, представляющую граф. Внимательный читатель заметил, что у нас появились веса ребер, но нет переменных, чтобы их хранить. До этого момента ребра нас не интересовали и были абсолютно равнозначны между собой, теперь же нам нужно выделить отдельную сущность под это (листинг \ref{lst:weighetGrahStruct}).
 
 \subsection{Структура для обхода}
 
@@ -80,11 +80,11 @@ interface Node {
     \begin{ruledelement}
         \begin{lstlisting}[caption={Поиск пути при обходе взвешенного графа в ширину}, label={lst:bfsWeightedRandomPath}]
 function traverseGraph() {
-    let currentNode = null;
-    const nextEdges = [currentNode];
+    let currentNode = startingNode;
+    const nextNodes = [currentNode];
 
     while (nextNodes.length !== 0) {
-        currentNode = nextEdges.shift();
+        currentNode = nextNodes.shift();
         currentNode.visited = true;
 
         if (currentNode.data === 'h') {
@@ -92,7 +92,7 @@ function traverseGraph() {
             const path = [];
 
             while(pathNode) {
-                path.ushift(pathNode);
+                path.unshift(pathNode);
                 pathNode = pathNode.parent;
             }
 
@@ -107,7 +107,7 @@ function traverseGraph() {
                 return nextEdge.nextNode;
             });
 
-        nextEdges.push(...edgesToAdd);
+        nextNodes.push(...edgesToAdd);
     }
 
     return null;
@@ -123,57 +123,55 @@ function traverseGraph() {
         emphstyle=\textbf,
     }
     \begin{ruledelement}
-        \begin{lstlisting}[caption={Первый подход к поиску кратчайшего пути}, label={lst:bfsShortestPath}]
+        \begin{lstlisting}[caption={Первый подход к поиску кратчайшего пути}, label={lst:fullDijsktra}]
 function traverseGraph() {
-    let currentNode = null;
-    let targetNode = null;
-    const nextNodes = [startingNode];
-    // distance from `startingNode` to itself is zero
-    const distances = new Map([[startingNode.id, 0]]);
+    let currentNode = startingNode;
+    const nextNodes = [currentNode];
+    const distances = new Map([[startingNode.id, 0]]); (*\label{code:fullDijsktra:distances}*)
 
-    while (nextEdges.length !== 0) {
-        currentNode = nextEdges.shift(); (*\label{code:bfsShortestPath:unshift}*)
+    while (nextNodes.length !== 0) {
+        currentNode = nextNodes.shift();
         currentNode.visited = true;
 
-        if (currentNode.data === 'h') {
-            targetNode = currentNode;
-        }
+        if (currentNode.id === 'h') { (*\label{code:fullDijsktra:path:start}*)
+            let pathNode = currentNode;
+            const path = [];
 
-        for (const nextEdge of currentNode.edges) {
+            while(pathNode) {
+                path.unshift(pathNode);
+                pathNode = pathNode.parent;
+            }
+
+            return path;
+        } (*\label{code:fullDijsktra:path:end}*)
+
+        for (const nextEdge of currentNode.edges) { (*\label{code:fullDijsktra:edges:start}*)
             const { nextNode } = nextEdge;
             const newDistance = distances.get(currentNode.id) + nextEdge.weight;
 
             // has another path to `nextNode`, need to select the shortest
-            if (distances.has(nextNode.id)) {
+            if (distances.has(nextNode.id)) { (*\label{code:fullDijsktra:compare:start}*)
                 const knownDistance = distances.get(nextNode.id);
 
                 // the new path is shorter, than the known
                 if (knownDistance > newDistance) {
                     distances.set(nextNode.id, newDistance);
                     nextNode.parent = currentNode;
-                }
+                } (*\label{code:fullDijsktra:compare:end}*)
 
             // the first known path to `nextNode`
-            } else {
+            } else { (*\label{code:fullDijsktra:firstSeen:start}*)
                 distances.set(nextNode.id, newDistance);
                 nextNode.parent = currentNode;
-            }
+            } (*\label{code:fullDijsktra:firstSeen:end}*)
 
             if (!nextEdge.nextNode.visited) {
-                nextEdges.push(nextEdge.nextNode);
+                nextNodes.push(nextEdge.nextNode);
             }
-        }
+        } (*\label{code:fullDijsktra:edges:end}*)
     }
 
-    let pathNode = targetNode;
-    const path = [];
-
-    while(pathNode) {
-        path.ushift(pathNode);
-        pathNode = pathNode.parent;
-    }
-
-    return path;
+    return null;
 }
         \end{lstlisting}
     \end{ruledelement}
@@ -186,25 +184,25 @@ function traverseGraph() {
 
 \subsection{Поиск кратчайшего пути}
 
-Теперь осталось лишь научится выбирать кратчайший путь по тому принципу, который был описан выше: запоминать первый найденный путь до целевой вершины и потом заменять его каждым следующим более коротким путем до целевой вершины.
+Прежде чем переходить к самому алгоритму, важно сделать замечание, что если мы каким-то образом найдем кратчайшие пути от начальной вершины до каждой вершины графа, то задача сводится к возврату одного из путей из набора, что тривиально. Что-то подобное и делает алгоритм Дейкстры, с небольшими нюансами, но это мы увидим позже.
 
-Если подумать, то чтобы найти кратчайшее расстояние до целевой вершины, нужно знать кратчайшее расстояние до всех вершин-предшественников для целевой, зная эти расстояния, мы можем дальше выбрать самое короткое ребро из ведущих в целевую вершину и завершить поиск. Аналогично, чтобы найти кратчайшее расстояние до всех вершин предшественников нужно знать кратчайшее расстояние до их предшественников и так далее до самого начала обхода. Другими словами, нам нужно посчитать кратчайшие расстояния от начальной вершины до каждой вершины в графе.
+Концептуально, сам алгоритм отличается от того же поиска в ширину только порядком обхода! На каждой итерации, вместо первого элемента из очереди nextNodes, мы будем выбирать элемент, кратчайший путь до которого является еще и кратчайшим среди других кратчайших путей до элементов nextNodes. Для этого нам нужно знать кратчайшее расстояние до всех вершин, добавленных в массив nextNodes. Как именно вычисляются эти расстояния мы тоже посмотрим, но если предположить, что такие расстояния у нас есть, выбор следующей вершины будет тривиальным поиском по массиву nextNodes.
 
-Будем хранить эти расстояния в словаре {\firacodebold distances}, где ключем будет {\firacodebold id} текущей вершины, а значением минимальное {\bfseries известное} расстояние от нее до начальной. При этом, так как даже для промежуточных вершин может быть найден более короткий путь в процессе обхода, а не только для целевой, то алгоритм подмены более длинного пути на более короткий будет общим для всех вершин.
+Эффективность всего алгоритма можно увеличить, если вместо ручного поиска в массиве использовать оптимизированную очередь с приоритетом. Тем не менее, построение таких очередей выходит за рамки этой статьи, поэтому будем просто перебирать массив.
 
-Мы не знаем наверняка, а не найдем ли более короткий путь, не обойдя весь граф, поэтому завершаем обход после того как обойден весь граф (массив {\firacodebold nextEdges} стал пустым).
+При таком порядке обхода, как только мы найдем целевую вершину, мы уже будем иметь обратный путь в обратном дереве обхода (рис. ...), который является кратчайшим, а если вы не верите на слово, что этот путь является кратчайшим, то доказательство этого приведено в параграфе на странице \pageref{dijkstraProve}.
 
-Полный код этого алгоритма приведен в листинге \ref{lst:bfsShortestPath}.
+Как уже утверждалось выше, чтобы изменить порядок обхода требуемым образом, нам нужно знать кратчайшее расстояние от начальной вершины, до всех, находящихся в массиве nextNodes.
 
-% Тут будет объяснение как работает алгоритм
+Будем хранить эти расстояния в словаре {\firacodebold distances}, где ключем будет {\firacodebold id} текущей вершины, а значением минимальное расстояние от нее до начальной (листинг \ref{lst:fullDijsktra}, строка \ref{code:fullDijsktra:distances}).
 
-Теперь давайте более подробно изучим код. Первое что изменилось, это момент, в который мы начинаем восстанавливать путь. Так как теперь мы не имеем права досрочно завершать обход в момент когда мы нашли целевую вершину, то мы просто запоминаем ее в отдельную переменную {\firacodebold targetNode} (строки 12-14), как только найдем, а восстановление пути делаем на строках 42-50. Логика не добавления уже посещенных вершин также сохранилась (строки 36-38).
+Как и в предыдущем алгоритме поиска пути в ширину (листинг \ref{lst:bfsWeightedRandomPath}), как только мы нашли целевую вершину, наступает время восстановления искомого пути и завершения алгоритма (строки \ref{code:fullDijsktra:path:start} - \ref{code:fullDijsktra:path:end}).
 
-Оставшаяся часть алгоритма из листинга \ref{lst:bfsWeightedRandomPath} (выставление предшественника в поле {\firacodebold parent}) тоже присутствует, но видоизменилась. На строках с 20 по 34 мы обрабатываем каждое исходящее ребро {\firacodebold nextEdge} текущей вершины {\firacodebold currentNode}. В случае, если ребро ведет до еще ранее не просмотренной вершины (для нее нету значения в словаре {\firacodebold distance}, строки 31-34), считаем, что кратчайшее расстояние до этой вершины равно кратчайшему расстоянию до предшественника вершины {\firacodebold nextNode}, которым является вершина {\firacodebold nextNode}, плюс длина обрабатываемого ребра {\firacodebold nextEdge}. В противном случае (строки 21-28), у нас есть два пути, длины которых нам надо сравнить и выбрать кротчайший, другими словами, оставить все как есть, если новый найденный путь длиннее или равен текущему, и обновить путь, если он короче. Ключевым здесь является то, что мы не только обновили расстояние в словаре {\firacodebold distance}, но и поле {\firacodebold parent} для {\firacodebold nextNode}, ведь чтобы действительно прийти в nextNode по новому найденному кратчайшему пути, надо идти туда из текущей обрабатываемой вершины.
+Оставшаяся часть алгоритма из листинга \ref{lst:bfsWeightedRandomPath} (выставление предшественника в поле {\firacodebold parent}) тоже присутствует, но видоизменилась. На строках с \ref{code:fullDijsktra:edges:start} по \ref{code:fullDijsktra:edges:end} мы обрабатываем каждое исходящее ребро {\firacodebold nextEdge} текущей вершины {\firacodebold currentNode}. В случае, если ребро ведет до еще ранее не просмотренной вершины (для нее нету значения в словаре {\firacodebold distances}, строки \ref{code:fullDijsktra:firstSeen:start}-\ref{code:fullDijsktra:firstSeen:end}), считаем, что кратчайшее расстояние до этой вершины равно кратчайшему расстоянию до предшественника вершины {\firacodebold nextNode}, которым является вершина {\firacodebold nextNode}, плюс длина обрабатываемого ребра {\firacodebold nextEdge}. В противном случае (строки \ref{code:fullDijsktra:compare:start}-\ref{code:fullDijsktra:compare:end}), у нас есть два пути, длины которых нам надо сравнить и выбрать кротчайший, другими словами, оставить все как есть, если новый найденный путь длиннее или равен текущему, и обновить путь, если он короче. Ключевым здесь является то, что мы не только обновили расстояние в словаре {\firacodebold distances}, но и поле {\firacodebold parent} для {\firacodebold nextNode}, ведь чтобы действительно прийти в nextNode по новому найденному кратчайшему пути, надо идти туда из текущей обрабатываемой вершины.
 
 Как и прежде, ссылки {\firacodebold parent} формируют обратное дерево обхода, только теперь его форма будут зависеть не только от порядка обхода, как мы видели раньше для обходов в глубину и ширину, но и от весов ребер, так как мы будем "переставлять" ссылку {\firacodebold parent} в зависимости от того, какой {\firacodebold parent} предоставляет более короткий путь.
 
-Раскадровка построения обратного дерева обхода для нашего случая приведена на рисунке \ref{fig:reverseTreeBfsShortestPath}.
+Раскадровка построения обратного дерева обхода для нашего случая приведена на рисунке \ref{fig:reverseTreeDijkstra}.
 
 \begin{figure*}
     \centering
@@ -220,7 +218,7 @@ function traverseGraph() {
             a⁰ -> [invisibleEdge, edge label=5] f,
         }
         \caption{Шаг 1}
-        \label{fig:reverseTreeBfsShortestPath1}
+        \label{fig:reverseTreeDijkstra1}
         \vspace*{1cm}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
@@ -236,7 +234,7 @@ function traverseGraph() {
             h¹⁰⁰ -> [edge label=100] a⁰,
         }
         \caption{Шаг 2}
-        \label{fig:reverseTreeBfsShortestPath2}
+        \label{fig:reverseTreeDijkstra2}
         \vspace*{1cm}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
@@ -252,7 +250,7 @@ function traverseGraph() {
             h¹⁰⁰ -> [edge label=100] a⁰,
         }
         \caption{Шаг 3}
-        \label{fig:reverseTreeBfsShortestPath3}
+        \label{fig:reverseTreeDijkstra3}
         \vspace*{1cm}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
@@ -268,7 +266,7 @@ function traverseGraph() {
             h¹⁰⁰ -> [edge label=100] a⁰,
         }
         \caption{Шаг 4}
-        \label{fig:reverseTreeBfsShortestPath4}
+        \label{fig:reverseTreeDijkstra4}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -283,7 +281,7 @@ function traverseGraph() {
             h¹⁰⁰ -> [edge label=100] a⁰,
         }
         \caption{Шаг 5}
-        \label{fig:reverseTreeBfsShortestPath5}
+        \label{fig:reverseTreeDijkstra5}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -297,10 +295,10 @@ function traverseGraph() {
             a⁰ <- [edge label=5] f⁵,
         }
         \caption{Шаг 6}
-        \label{fig:reverseTreeBfsShortestPath6}
+        \label{fig:reverseTreeDijkstra6}
     \end{subfigure}
     \caption{Раскадровка обратного дерева обхода}
-    \label{fig:reverseTreeBfsShortestPath}
+    \label{fig:reverseTreeDijkstra}
 \end{figure*}
 
 С первого взгляда кажется, что все работает, мы действительно нашли кратчайший путь для нашего графа ({\firacodebold[a, f, g, h]} длиной 16). Но на самом деле алгоритм в общем случае использовать нельзя, так он не дает гарантированного результата.
@@ -388,7 +386,7 @@ function traverseGraph() {
 
 Это последний шаг нашей трансформации алгоритма, когда он станет собственно алгоритмом Дейкстры, и будет лишен недостатка, описанного выше. И все что мы сделаем в этот раз, это изменим порядок обхода!
 
-До этого мы реализовали обход в ширину, и как видно он не гарантирует правильного решения. Но если мы будем доставать из массива {\firacodebold nextNodes} (строка \ref{code:bfsShortestPath:unshift} в листинге \ref{lst:bfsShortestPath}) не самый первый элемент, а тот, который имеет минимальное расстояние до начальной вершины (соответствующие расстояния записаны в словаре {\firacodebold distances}), то мы получим алгоритм Дейкстры.
+До этого мы реализовали обход в ширину, и как видно он не гарантирует правильного решения. Но если мы будем доставать из массива {\firacodebold nextNodes} (строка \ref{code:fullDijsktra:unshift} в листинге \ref{lst:fullDijsktra}) не самый первый элемент, а тот, который имеет минимальное расстояние до начальной вершины (соответствующие расстояния записаны в словаре {\firacodebold distances}), то мы получим алгоритм Дейкстры.
 
 \begin{figure*}
     \begin{ruledelement}
@@ -541,11 +539,9 @@ currentNode = getNodeFromQueue(nextNodes, distances);
     \label{fig:dijkstraProve}
 \end{figure}
 
-\subsection{Доказательство верности}
+\subsection{Доказательство верности} \label{dijkstraProve}
 
-Мы уже увидели, что кажущийся с первого взгляда верный алгоритм, может так и не быть. К счастью, алгоритм Дейкстры имеет доказательство.
-
-Прежде чем перейти к формальному доказательству, можно заметить, что проблема, описанная для первого алгоритма, показанного в листинге \ref{lst:bfsShortestPath}, заключалась в том, что мы попали в вершину h по более длинному пути [a, h] раньше, чем по более короткому [a, f, g, h], и из-за того, что словарь distances перестал быть валидным хранилищем кратчайших расстояний от начальной вершины до любой другой обойденной вершины в графе, а алгоритм Дейкстры исключает такую возможность.
+Прежде чем перейти к формальному доказательству, можно заметить, что проблема, описанная для первого алгоритма, показанного в листинге \ref{lst:fullDijsktra}, заключалась в том, что мы попали в вершину h по более длинному пути [a, h] раньше, чем по более короткому [a, f, g, h], и из-за того, что словарь distances перестал быть валидным хранилищем кратчайших расстояний от начальной вершины до любой другой обойденной вершины в графе, а алгоритм Дейкстры исключает такую возможность.
 
 Выбирая следующую вершину для обхода из nextNodes, мы по сути выбираем следующий путь, от которого мы продолжим анализ. Предположим, в какой-то момент алгоритм совершил ошибку и вначале попал в вершину end по более длинному пути PathY, чем тот, который еще не открыт (PathX). Это означало бы, что PathX включает в себя как минимум один из уже открытых путей, но все открытые пути по определению алгоритма должны быть длиннее PathY (на каждом этапе мы всегда выбираем самый короткий путь), значит PathX должен включать в себя путь, более длинный чем PathY, что означает, что PathX не может быть короче PathY. Следовательно, и совершение алгоритмом ошибки невозможно.
 
