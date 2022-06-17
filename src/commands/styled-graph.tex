@@ -1,34 +1,51 @@
-\newcommandx{\styledgraph}[3][1=1.5cm, 2=tree layout]{
+\newenvironmentx{styledtikz}{
     \begin{center}
-        \begin{tikzpicture}
-            \graph [
-                #2,
-                nodes={
-                    circle, draw, very thick, accentColor, minimum size=9mm,
-                    text=textColor, font=\bfseries,
-                    pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
-                },
-                level distance=#1,
-                node distance=#1,
-                edges={
-                    shorten <=1pt,>={Stealth[round]},very thick,accentColor, inner sep=0.5pt, font=\bfseries,
-                },
-                reverseEdge/.style={secondaryAccentColor},
-                reverseNode/.style={
-                    secondaryAccentColor,
-                    pattern=hatch, pattern color={secondaryAccentColor!70}, hatch size=4pt,
-                    text=textColor,
-                },
-                disabledEdge/.style={secondaryColor},
-                disabledNode/.style={
-                    secondaryColor,
-                    pattern=hatch, pattern color={secondaryColor!70}, hatch size=4pt,
-                },
-                invisibleEdge/.style={backgroundColor, text=backgroundColor},
-                invisibleNode/.style={backgroundColor, fill=backgroundColor, text=backgroundColor},
-            ]
-            { #3 };
-            % \draw[->] (b) -- node[midway] {+1} (f);
-        \end{tikzpicture}
+    \begin{tikzpicture}
+    \begin{scope}[
+        baseNode/.style={
+            circle, draw, very thick, accentColor, minimum size=9mm,
+            text=textColor, font=\bfseries,
+            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
+        },
+        every edge/.style={
+            draw, shorten <=1pt,>={Stealth[round]},very thick,accentColor, inner sep=0.5pt, font=\bfseries,
+        },
+        reverseEdge/.style={secondaryAccentColor},
+        reverseNode/.style={
+            secondaryAccentColor,
+            pattern=hatch, pattern color={secondaryAccentColor!70}, hatch size=4pt,
+            text=textColor,
+        },
+        disabledEdge/.style={secondaryColor},
+        disabledNode/.style={
+            secondaryColor,
+            pattern=hatch, pattern color={secondaryColor!70}, hatch size=4pt,
+        },
+        invisibleEdge/.style={backgroundColor, text=backgroundColor},
+        invisibleNode/.style={backgroundColor, fill=backgroundColor, text=backgroundColor},
+        dashedPath/.style={densely dashed},
+        selected/.style={
+            line width=2pt,
+            hatch line width=1pt,
+        },
+    ]
+}
+{
+    \end{scope}
+    \end{tikzpicture}
     \end{center}
+}
+
+\newcommandx{\styledgraph}[3][1=1.5cm, 2=tree layout]{
+    \begin{styledtikz}
+        \graph [
+            #2,
+            % sibling distance=#1,
+            node distance=#1,
+            level distance=#1,
+            nodes={baseNode},
+        ]
+        { #3 };
+            % \draw[->] (b) -- node[midway] {+1} (f);
+    \end{styledtikz}
 }
