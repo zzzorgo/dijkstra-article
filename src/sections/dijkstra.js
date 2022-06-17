@@ -40,13 +40,30 @@ c.edges.push({ nextNode: a, weight: 5 });
 
 const startingNode = a;
 
+// take the shortest sub-path in the `nextNodes`
+function getNodeFromQueue(nextNodes, distances) {
+    let nextNodeId = null;
+    let resultIndex = -1;
+
+    for (let i = 0; i < nextNodes.length; i++) {
+        if (distances.get(nextNodes[i].id) < distances.get(nextNodeId)) {
+            nextNodeId = nextNodes[i].id;
+            resultIndex = i;
+        }
+    }
+
+    const [nextNode] = nextNodes.splice(resultIndex, 1);
+
+    return nextNode;
+}
+
 function traverseGraph() {
     let currentNode = startingNode;
     const nextNodes = [currentNode];
     const distances = new Map([[startingNode.id, 0]]);
 
     while (nextNodes.length !== 0) {
-        currentNode = nextNodes.shift();
+        currentNode = getNodeFromQueue(nextNodes, distances);
         currentNode.visited = true;
 
         if (currentNode.id === 'h') {

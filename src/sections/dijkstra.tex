@@ -46,18 +46,12 @@
 
 При таком определении кратчайшего пути мы уже не можем сказать, что поиск в глубину или поиск в ширину даст нам кратчайший путь, так как кратчайший путь теперь зависит не только от графа, но и от веса ребер (хотя в данном примере именно обход в глубину даст кратчайший путь, но это просто совпадение).
 
-Прежде всего, надо в очередной раз поменять структуру данных, представляющую граф. Внимательный читатель заметил, что у нас появились веса ребер, но нет переменных, чтобы их хранить. До этого момента ребра нас не интересовали и были абсолютно равнозначны между собой, теперь же нам нужно выделить отдельную сущность под это (листинг \ref{lst:weighetGrahStruct}).
-
-\subsection{Структура для обхода}
-
-В этой структуре каждая вершина теперь имеет массив ребер {\firacodebold edges}, которые выходят из этой вершины, а каждое ребро {\firacodebold Edge} в этом массиве имеет вес {\firacodebold weight} и ссылку на вершину на другом конце ребра {\firacodebold nextNode}. Таким образом массив {\firacodebold neighbors} нам больше не нужен, информация о соседях перенесена в массив {\firacodebold edges}.
-
 \begin{ruledelement}
     \lstset{
         emph={edges},
         emphstyle=\textbf,
-    }
-    \begin{lstlisting}[caption={Структура для взвешенного графа}, label={lst:weighetGrahStruct}]
+        }
+        \begin{lstlisting}[caption={Структура для взвешенного графа}, label={lst:weighetGrahStruct}]
 interface Edge {
     weight: number;
     nextNode: Node;
@@ -117,6 +111,39 @@ function traverseGraph() {
 
 \end{figure*}
 
+Прежде всего, надо в очередной раз поменять структуру данных, представляющую граф. Внимательный читатель заметил, что у нас появились веса ребер, но нет переменных, чтобы их хранить. До этого момента ребра нас не интересовали и были абсолютно равнозначны между собой, теперь же нам нужно выделить отдельную сущность под это (листинг \ref{lst:weighetGrahStruct}).
+
+\subsection{Структура для обхода}
+
+В этой структуре каждая вершина теперь имеет массив ребер {\firacodebold edges}, которые выходят из этой вершины, а каждое ребро {\firacodebold Edge} в этом массиве имеет вес {\firacodebold weight} и ссылку на вершину на другом конце ребра {\firacodebold nextNode}. Таким образом массив {\firacodebold neighbors} нам больше не нужен, информация о соседях перенесена в массив {\firacodebold edges}.
+
+\begin{figure*}
+    \begin{ruledelement}
+        \lstset{
+            emph={getNodeFromQueue, currentNode},
+            emphstyle=\textbf,
+        }
+        \begin{lstlisting}[caption={Отличие алгоритма дейкстры}, label={lst:dijkstraDiffBfs}]
+// take the shortest sub-path in the `nextNodes`
+function getNodeFromQueue(nextNodes, distances) {
+    let nextNodeId = null;
+    let resultIndex = -1;
+
+    for (let i = 0; i < nextNodes.length; i++) {
+        if (distances.get(nextNodes[i].id) < distances.get(nextNodeId)) {
+            nextNodeId = nextNodes[i].id;
+            resultIndex = i;
+        }
+    }
+
+    const [nextNode] = nextNodes.splice(resultIndex, 1);
+
+    return nextNode;
+}
+        \end{lstlisting}
+    \end{ruledelement}
+\end{figure*}
+
 \begin{figure*}
     \lstset{
         emph={targetNode, newDistance},
@@ -130,7 +157,7 @@ function traverseGraph() {
     const distances = new Map([[startingNode.id, 0]]); (*\label{code:fullDijsktra:distances}*)
 
     while (nextNodes.length !== 0) {
-        currentNode = nextNodes.shift();
+        currentNode = getNodeFromQueue(nextNodes, distances);
         currentNode.visited = true;
 
         if (currentNode.id === 'h') { (*\label{code:fullDijsktra:path:start}*)
@@ -195,14 +222,6 @@ function traverseGraph() {
 Как уже утверждалось выше, чтобы изменить порядок обхода требуемым образом, нам нужно знать кратчайшее расстояние от начальной вершины, до всех, находящихся в массиве nextNodes.
 
 Будем хранить эти расстояния в словаре {\firacodebold distances}, где ключем будет {\firacodebold id} текущей вершины, а значением минимальное расстояние от нее до начальной (листинг \ref{lst:fullDijsktra}, строка \ref{code:fullDijsktra:distances}).
-
-Как и в предыдущем алгоритме поиска пути в ширину (листинг \ref{lst:bfsWeightedRandomPath}), как только мы нашли целевую вершину, наступает время восстановления искомого пути и завершения алгоритма (строки \ref{code:fullDijsktra:path:start} - \ref{code:fullDijsktra:path:end}).
-
-Оставшаяся часть алгоритма из листинга \ref{lst:bfsWeightedRandomPath} (выставление предшественника в поле {\firacodebold parent}) тоже присутствует, но видоизменилась. На строках с \ref{code:fullDijsktra:edges:start} по \ref{code:fullDijsktra:edges:end} мы обрабатываем каждое исходящее ребро {\firacodebold nextEdge} текущей вершины {\firacodebold currentNode}. В случае, если ребро ведет до еще ранее не просмотренной вершины (для нее нету значения в словаре {\firacodebold distances}, строки \ref{code:fullDijsktra:firstSeen:start}-\ref{code:fullDijsktra:firstSeen:end}), считаем, что кратчайшее расстояние до этой вершины равно кратчайшему расстоянию до предшественника вершины {\firacodebold nextNode}, которым является вершина {\firacodebold nextNode}, плюс длина обрабатываемого ребра {\firacodebold nextEdge}. В противном случае (строки \ref{code:fullDijsktra:compare:start}-\ref{code:fullDijsktra:compare:end}), у нас есть два пути, длины которых нам надо сравнить и выбрать кротчайший, другими словами, оставить все как есть, если новый найденный путь длиннее или равен текущему, и обновить путь, если он короче. Ключевым здесь является то, что мы не только обновили расстояние в словаре {\firacodebold distances}, но и поле {\firacodebold parent} для {\firacodebold nextNode}, ведь чтобы действительно прийти в nextNode по новому найденному кратчайшему пути, надо идти туда из текущей обрабатываемой вершины.
-
-Как и прежде, ссылки {\firacodebold parent} формируют обратное дерево обхода, только теперь его форма будут зависеть не только от порядка обхода, как мы видели раньше для обходов в глубину и ширину, но и от весов ребер, так как мы будем "переставлять" ссылку {\firacodebold parent} в зависимости от того, какой {\firacodebold parent} предоставляет более короткий путь.
-
-Раскадровка построения обратного дерева обхода для нашего случая приведена на рисунке \ref{fig:reverseTreeDijkstra}.
 
 \begin{figure*}
     \centering
@@ -348,126 +367,13 @@ function traverseGraph() {
     \label{fig:reverseTreeDijkstra}
 \end{figure*}
 
-С первого взгляда кажется, что все работает, мы действительно нашли кратчайший путь для нашего графа ({\firacodebold[a, f, g, h]} длиной 16). Но на самом деле алгоритм в общем случае использовать нельзя, так он не дает гарантированного результата.
+Как и в предыдущем алгоритме поиска пути в ширину (листинг \ref{lst:bfsWeightedRandomPath}), как только мы нашли целевую вершину, наступает время восстановления искомого пути и завершения алгоритма (строки \ref{code:fullDijsktra:path:start} - \ref{code:fullDijsktra:path:end}).
 
-Давайте добавим ровно одну вершину и два ребра в наш граф (рис. \ref{fig:exposeBfsError}) и посмотрим на шаг 4 алгоритма внимательнее (рис. \ref{fig:exposeBfsErrorStep}). Предположим что мы ищем путь от {\firacodebold a} к {\firacodebold j}.
+Оставшаяся часть алгоритма из листинга \ref{lst:bfsWeightedRandomPath} (выставление предшественника в поле {\firacodebold parent}) тоже присутствует, но видоизменилась. На строках с \ref{code:fullDijsktra:edges:start} по \ref{code:fullDijsktra:edges:end} мы обрабатываем каждое исходящее ребро {\firacodebold nextEdge} текущей вершины {\firacodebold currentNode}. В случае, если ребро ведет до еще ранее не просмотренной вершины (для нее нету значения в словаре {\firacodebold distances}, строки \ref{code:fullDijsktra:firstSeen:start}-\ref{code:fullDijsktra:firstSeen:end}), считаем, что кратчайшее расстояние до этой вершины равно кратчайшему расстоянию до предшественника вершины {\firacodebold nextNode}, которым является вершина {\firacodebold nextNode}, плюс длина обрабатываемого ребра {\firacodebold nextEdge}. В противном случае (строки \ref{code:fullDijsktra:compare:start}-\ref{code:fullDijsktra:compare:end}), у нас есть два пути, длины которых нам надо сравнить и выбрать кротчайший, другими словами, оставить все как есть, если новый найденный путь длиннее или равен текущему, и обновить путь, если он короче. Ключевым здесь является то, что мы не только обновили расстояние в словаре {\firacodebold distances}, но и поле {\firacodebold parent} для {\firacodebold nextNode}, ведь чтобы действительно прийти в nextNode по новому найденному кратчайшему пути, надо идти туда из текущей обрабатываемой вершины.
 
-\begin{figure}
-    \styledgraph{
-        a -> [edge label=7] b,
-        b -> [edge label=11, inner sep=1pt] c,
-        b -> [edge label=2] d,
-        d -> [edge label=1, inner sep=1.5pt] e,
-        f -> [edge label=7, inner sep=1.5pt] g,
-        g -> [edge label=4, near start] h,
-        g -> [edge label=8] i,
-        a -> [edge label=5] f,
-        i -> [bend right=45, edge label=10] f,
-        c -> [bend left=45, edge label=5] a,
-        h <- [edge label=100] a,
-        h -> [edge label=2, inner sep=2.5pt] j,
-        i -> [edge label=50, inner sep=2.5pt] j,
-    }
-    \caption{Еще один пример графа}
-    \label{fig:exposeBfsError}
-\end{figure}
+Как и прежде, ссылки {\firacodebold parent} формируют обратное дерево обхода, только теперь его форма будут зависеть не только от порядка обхода, как мы видели раньше для обходов в глубину и ширину, но и от весов ребер, так как мы будем "переставлять" ссылку {\firacodebold parent} в зависимости от того, какой {\firacodebold parent} предоставляет более короткий путь.
 
-\begin{figure*}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ <- [edge label=7] b⁷,
-            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
-            b⁷ <- [edge label=2] d⁹,
-            d⁹ -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
-            f⁵ -> [invisibleEdge, edge label=7, inner sep=1.5pt] g [disabledNode],
-            g -> [invisibleEdge, edge label=4] h¹⁰⁰,
-            g -> [invisibleEdge, edge label=8] i [disabledNode],
-            a⁰ <- [edge label=5] f⁵,
-            h¹⁰⁰ -> [edge label=100] a⁰,
-            j¹⁰² -> [edge label=2, inner sep=2.5pt] h¹⁰⁰,
-            i -> [invisibleEdge, edge label=50, inner sep=2.5pt] j¹⁰²,
-        }
-        \caption{Еще один пример графа}
-        \label{fig:exposeBfsErrorStep}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ <- [edge label=7] b⁷,
-            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
-            b⁷ <- [edge label=2] d⁹,
-            d⁹ <- [edge label=1, inner sep=1.5pt] c¹⁶,
-            f⁵ <- [edge label=7, inner sep=1.5pt] g¹²,
-            g¹² -> [invisibleEdge, edge label=4] h¹⁶,
-            g¹² <- [edge label=8] i²⁰,
-            a⁰ <- [edge label=5] f⁵,
-            g¹² <- [edge label=4] h¹⁶,
-            j¹⁰² [reverseNode] -> [reverseEdge, edge label=2, inner sep=2.5pt] h¹⁶,
-            i²⁰ -> [invisibleEdge, edge label=50, inner sep=2.5pt] j¹⁰²,
-        }
-        \caption{Еще один пример графа}
-        \label{fig:exposeBfsErrorStep2}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ <- [edge label=7] b⁷,
-            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
-            b⁷ <- [edge label=2] d⁹,
-            d⁹ <- [edge label=1, inner sep=1.5pt] c¹⁶,
-            f⁵ <- [edge label=7, inner sep=1.5pt] g¹²,
-            g¹² -> [invisibleEdge, edge label=4] h¹⁶,
-            g¹² <- [edge label=8] i²⁰,
-            a⁰ <- [edge label=5] f⁵,
-            g¹² <- [edge label=4] h¹⁶,
-            j⁷⁰ [reverseNode] -> [invisibleEdge, edge label=2, inner sep=2.5pt] h¹⁶,
-            i²⁰ <- [reverseEdge, edge label=50, inner sep=2.5pt] j⁷⁰,
-        }
-        \caption{Еще один пример графа}
-        \label{fig:exposeBfsErrorStep3}
-    \end{subfigure}
-\end{figure*}
-
-
-На рисунке \ref{fig:exposeBfsErrorStep} кратчайший и единственный путь от от {\firacodebold a} к {\firacodebold j} имеет длину 102. Если теперь перейти к шагу 6 (рис. \ref{fig:exposeBfsErrorStep2}) То мы увидим, что кратчайший путь до вершины {\firacodebold h} обновится, как и для предыдущего графа, но вот для верины {\firacodebold j} нет, так как мы не написали для это специально логики. То есть в словаре distance все еще записано 102 как кротчайший путь до вершины {\firacodebold j}. И если теперь перейти к последнему (седьмому) шагу то мы увидим картину на рисунке \ref{fig:exposeBfsErrorStep3}. Так как 102 (сохраненный кротчайший путь до вершины j) меньше чем 70 (текущий путь), то мы обновляем его в словаре distance и подменяем {\firacodebold parent}, в результате получая более длинный путь {\firacodebold [j, i, g, f, a]} = 70, чем могли бы ({\firacodebold [j, h, ,g, f, a]} = 18).
-
-\subsection{Верный алгоритм}
-
-Это последний шаг нашей трансформации алгоритма, когда он станет собственно алгоритмом Дейкстры, и будет лишен недостатка, описанного выше. И все что мы сделаем в этот раз, это изменим порядок обхода!
-
-До этого мы реализовали обход в ширину, и как видно он не гарантирует правильного решения. Но если мы будем доставать из массива {\firacodebold nextNodes} (строка \ref{code:fullDijsktra:unshift} в листинге \ref{lst:fullDijsktra}) не самый первый элемент, а тот, который имеет минимальное расстояние до начальной вершины (соответствующие расстояния записаны в словаре {\firacodebold distances}), то мы получим алгоритм Дейкстры.
-
-\begin{figure*}
-    \begin{ruledelement}
-        \lstset{
-            emph={getNodeFromQueue, currentNode},
-            emphstyle=\textbf,
-        }
-        \begin{lstlisting}[caption={Отличие алгоритма дейкстры}, label={lst:dijkstraDiffBfs}]
-// take the shortest sub-path in the `nextNodes`
-function getNodeFromQueue(nextNodes, distances) {
-    let nextNodeId = null;
-    let resultIndex = -1;
-
-    for (let i = 0; i < nextNodes.length; i++) {
-        if (distances.get(nextNodes[i].id) < distances.get(nextNodeId)) {
-            nextNodeId = nextNodes[i].id;
-            resultIndex = i;
-        }
-    }
-
-    const [nextNode] = nextNodes.splice(resultIndex, 1);
-
-    return nextNode;
-}
-
-// ...
-
-// currentNode = nextEdges.shift();
-currentNode = getNodeFromQueue(nextNodes, distances);
-        \end{lstlisting}
-    \end{ruledelement}
-\end{figure*}
-
-Аналогичное поведение достигается заменой массива nextNodes на очередь с приоритетом, но так в JavaScript нет готовой структуры для этого, проще, с точки зрения реализации, написать функцию вынимающую наиболее приоритетный элемент из обычного массива.
+Раскадровка построения обратного дерева обхода для нашего случая приведена на рисунке \ref{fig:reverseTreeDijkstra}, а "перестановку" ссылки parent можно увидеть для вершины h при переходе от шага 6 (рис. \ref{fig:reverseTreeDijkstra6}) к шагу 7 (рис. \ref{fig:reverseTreeDijkstra7}).
 
 \begin{figure}
     \begin{tikzpicture}
