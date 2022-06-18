@@ -1,0 +1,270 @@
+\begin{figure*}
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \begin{styledtikz}
+            \begin{scope}[local bounding box=graph1, tree layout]
+                \begin{scope}[every node/.style={baseNode}]
+                    \node (a) {\splittext{a}{0}};
+                    \node (b) [disabledNode] {b};
+                    \node (c) [disabledNode] {c};
+                    \node (d) [disabledNode] {d};
+                    \node (e) [disabledNode] {e};
+                    \node (f) [disabledNode] {f};
+                    \node (g) [disabledNode] {g};
+                    \node (h) [disabledNode] {h};
+                    \node (i) [disabledNode] {i};
+                \end{scope}
+
+                \styledgraphraw{
+                    (a) <- [invisibleEdge] (b),
+                    (b) <- [invisibleEdge] (c),
+                    (b) <- [invisibleEdge] (d),
+                    (d) <- [invisibleEdge] (e),
+                    (f) <- [invisibleEdge] (g),
+                    (g) <- [invisibleEdge] (h),
+                    (g) <- [invisibleEdge] (i),
+                    (a) <- [invisibleEdge] (f),
+                    (h) -> [invisibleEdge] (a),
+                };
+            \end{scope}
+        \end{styledtikz}
+        \caption{Шаг 1}
+        \label{fig:reverseTreeDijkstra1}
+        \vspace*{1cm}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \begin{styledtikz}
+            \begin{scope}[local bounding box=graph1, tree layout]
+                \begin{scope}[every node/.style={baseNode}]
+                    \node (a) [reverseNode, selected] {\splittext{a}{0}};
+                    \node (b) {\splittext{b}{7}};
+                    \node (c) [disabledNode] {c};
+                    \node (d) [disabledNode] {d};
+                    \node (e) [disabledNode] {e};
+                    \node (f) {\splittext{f}{5}};
+                    \node (g) [disabledNode] {g};
+                    \node (h) {\splittext{h}{100}};
+                    \node (i) [disabledNode] {i};
+                \end{scope}
+
+                \styledgraphraw{
+                    (a) <- [edge label=7] (b),
+                    (b) <- [invisibleEdge] (c),
+                    (b) <- [invisibleEdge] (d),
+                    (d) <- [invisibleEdge] (e),
+                    (f) <- [invisibleEdge] (g),
+                    (g) <- [invisibleEdge] (h),
+                    (g) <- [invisibleEdge] (i),
+                    (a) <- [edge label=5] (f),
+                    (h) -> [edge label=100] (a),
+                };
+            \end{scope}
+        \end{styledtikz}
+        \caption{Шаг 2}
+        \label{fig:reverseTreeDijkstra2}
+        \vspace*{1cm}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \begin{styledtikz}
+            \begin{scope}[local bounding box=graph1, tree layout]
+                \begin{scope}[every node/.style={baseNode}]
+                    \node (a) [reverseNode] {\splittext{a}{0}};
+                    \node (b) {\splittext{b}{7}};
+                    \node (c) [disabledNode] {c};
+                    \node (d) [disabledNode] {d};
+                    \node (e) [disabledNode] {e};
+                    \node (f) [reverseNode, selected] {\splittext{f}{5}};
+                    \node (g) {\splittext{g}{12}};
+                    \node (h) {\splittext{h}{100}};
+                    \node (i) [disabledNode] {i};
+                \end{scope}
+
+                \styledgraphraw{
+                    (a) <- [edge label=7] (b),
+                    (b) <- [invisibleEdge] (c),
+                    (b) <- [invisibleEdge] (d),
+                    (d) <- [invisibleEdge] (e),
+                    (f) <- [edge label=7, inner sep=2pt] (g),
+                    (g) <- [invisibleEdge] (h),
+                    (g) <- [invisibleEdge] (i),
+                    (a) <- [reverseEdge, edge label=5] (f),
+                    (h) -> [edge label=100] (a),
+                };
+            \end{scope}
+        \end{styledtikz}
+        \caption{Шаг 3}
+        \label{fig:reverseTreeDijkstra3}
+        \vspace*{1cm}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \begin{styledtikz}
+            \begin{scope}[local bounding box=graph1, tree layout]
+                \begin{scope}[every node/.style={baseNode}]
+                    \node (a) [reverseNode] {\splittext{a}{0}};
+                    \node (b) [reverseNode, selected] {\splittext{b}{7}};
+                    \node (c) {\splittext{c}{18}};
+                    \node (d) {\splittext{d}{9}};
+                    \node (e) [disabledNode] {e};
+                    \node (f) [reverseNode] {\splittext{f}{5}};
+                    \node (g) {\splittext{g}{12}};
+                    \node (h) {\splittext{h}{100}};
+                    \node (i) [disabledNode] {i};
+                \end{scope}
+
+                \styledgraphraw{
+                    (a) <- [reverseEdge, edge label=7] (b),
+                    (b) <- [edge label=11] (c),
+                    (b) <- [edge label=2] (d),
+                    (d) <- [invisibleEdge] (e),
+                    (f) <-[edge label=7, inner sep=2pt] (g),
+                    (g) <- [invisibleEdge] (h),
+                    (g) <- [invisibleEdge] (i),
+                    (a) <- [reverseEdge, edge label=5] (f),
+                    (h) -> [edge label=100] (a),
+                };
+            \end{scope}
+        \end{styledtikz}
+        \caption{Шаг 4}
+        \label{fig:reverseTreeDijkstra4}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \begin{styledtikz}
+            \begin{scope}[local bounding box=graph1, tree layout]
+                \begin{scope}[every node/.style={baseNode}]
+                    \node (a) [reverseNode] {\splittext{a}{0}};
+                    \node (b) [reverseNode] {\splittext{b}{7}};
+                    \node (c) {\splittext{c}{18}};
+                    \node (d) [reverseNode, selected] {\splittext{d}{9}};
+                    \node (e) {\splittext{e}{10}};
+                    \node (f) [reverseNode] {\splittext{f}{5}};
+                    \node (g) {\splittext{g}{12}};
+                    \node (h) {\splittext{h}{100}};
+                    \node (i) [disabledNode] {i};
+                \end{scope}
+
+                \styledgraphraw{
+                    (a) <- [reverseEdge, edge label=7] (b),
+                    (b) <- [edge label=11] (c),
+                    (b) <- [reverseEdge, edge label=2] (d),
+                    (d) <- [edge label=1, inner sep=2pt] (e),
+                    (f) <-[edge label=7, inner sep=2pt] (g),
+                    (g) <- [invisibleEdge] (h),
+                    (g) <- [invisibleEdge] (i),
+                    (a) <- [reverseEdge, edge label=5] (f),
+                    (h) -> [edge label=100] (a),
+                };
+            \end{scope}
+        \end{styledtikz}
+        \caption{Шаг 5}
+        \label{fig:reverseTreeDijkstra5}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \begin{styledtikz}
+            \begin{scope}[local bounding box=graph1, tree layout]
+                \begin{scope}[every node/.style={baseNode}]
+                    \node (a) [reverseNode] {\splittext{a}{0}};
+                    \node (b) [reverseNode] {\splittext{b}{7}};
+                    \node (c) {\splittext{c}{18}};
+                    \node (d) [reverseNode] {\splittext{d}{9}};
+                    \node (e) [reverseNode, selected] {\splittext{e}{10}};
+                    \node (f) [reverseNode] {\splittext{f}{5}};
+                    \node (g) {\splittext{g}{12}};
+                    \node (h) {\splittext{h}{100}};
+                    \node (i) [disabledNode] {i};
+                \end{scope}
+
+                \styledgraphraw{
+                    (a) <- [reverseEdge, edge label=7] (b),
+                    (b) <- [edge label=11] (c),
+                    (b) <- [reverseEdge, edge label=2] (d),
+                    (d) <- [reverseEdge, edge label=1, inner sep=2pt] (e),
+                    (f) <-[edge label=7, inner sep=2pt] (g),
+                    (g) <- [invisibleEdge] (h),
+                    (g) <- [invisibleEdge] (i),
+                    (a) <- [reverseEdge, edge label=5] (f),
+                    (h) -> [edge label=100] (a),
+                };
+            \end{scope}
+        \end{styledtikz}
+        \caption{Шаг 6}
+        \label{fig:reverseTreeDijkstra6}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \begin{styledtikz}
+            \begin{scope}[local bounding box=graph1, tree layout]
+                \begin{scope}[every node/.style={baseNode}]
+                    \node (a) [reverseNode] {\splittext{a}{0}};
+                    \node (b) [reverseNode] {\splittext{b}{7}};
+                    \node (c) {\splittext{c}{18}};
+                    \node (d) [reverseNode] {\splittext{d}{9}};
+                    \node (e) [reverseNode] {\splittext{e}{10}};
+                    \node (f) [reverseNode] {\splittext{f}{5}};
+                    \node (g) [reverseNode, selected] {\splittext{g}{12}};
+                    \node (h) {\splittext{h}{16}};
+                    \node (i) {\splittext{i}{20}};
+                \end{scope}
+
+                \styledgraphraw{
+                    (a) <- [reverseEdge, edge label=7] (b),
+                    (b) <- [edge label=11] (c),
+                    (b) <- [reverseEdge, edge label=2] (d),
+                    (d) <- [reverseEdge, edge label=1, inner sep=2pt] (e),
+                    (f) <-[reverseEdge, edge label=7, inner sep=2pt] (g),
+                    (g) <- [edge label=4] (h),
+                    (g) <- (i),
+                    (a) <- [reverseEdge, edge label=5] (f),
+                };
+            \end{scope}
+        \end{styledtikz}
+        \caption{Шаг 7}
+        \label{fig:reverseTreeDijkstra7}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \begin{styledtikz}
+            \begin{scope}[local bounding box=graph1, tree layout]
+                \begin{scope}[every node/.style={baseNode}]
+                    \node (a) [reverseNode] {\splittext{a}{0}};
+                    \node (b) [reverseNode] {\splittext{b}{7}};
+                    \node (c) {\splittext{c}{18}};
+                    \node (d) [reverseNode] {\splittext{d}{9}};
+                    \node (e) [reverseNode] {\splittext{e}{10}};
+                    \node (f) [reverseNode] {\splittext{f}{5}};
+                    \node (g) [reverseNode] {\splittext{g}{12}};
+                    \node (h) [reverseNode, selected] {\splittext{h}{16}};
+                    \node (i) {\splittext{i}{20}};
+                \end{scope}
+
+                \styledgraphraw{
+                    (a) <- [reverseEdge, edge label=7] (b),
+                    (b) <- [edge label=11] (c),
+                    (b) <- [reverseEdge, edge label=2] (d),
+                    (d) <- [reverseEdge, edge label=1, inner sep=2pt] (e),
+                    (f) <-[reverseEdge, edge label=7, inner sep=2pt] (g),
+                    (g) <- [reverseEdge, edge label=4] (h),
+                    (g) <- (i),
+                    (a) <- [reverseEdge, edge label=5] (f),
+                };
+            \end{scope}
+        \end{styledtikz}
+        \caption{Шаг 8}
+        \label{fig:reverseTreeDijkstra8}
+    \end{subfigure}
+    \begin{subfigure}{0.32\textwidth}
+        \begin{styledtikz}
+            \begin{scope}[
+                node distance=7pt,
+            ]
+                \node [baseNode, minimum size=5pt] (abc) {};
+                \node [right=5pt of abc, font=\footnotesize] {добавленные в {\firacodebold distances}};
+                \node [baseNode, below=of abc, minimum size=5pt, disabledNode] (bca) {};
+                \node [right=5pt of bca,font=\footnotesize] {еще не открытые алгоритмом};
+                \node [baseNode, below=of bca, minimum size=5pt, reverseNode] (hhh) {};
+                \node [right=5pt of hhh, font=\footnotesize] {посещенные ({\firacodebold visited = true})};
+                \node [baseNode, below=of hhh, minimum size=5pt, reverseNode, selected] (yty) {};
+                \node [right=5pt of yty, font=\footnotesize] {текущая ({\firacodebold currentNode})};
+            \end{scope}
+        \end{styledtikz}
+    \end{subfigure}
+    \caption{Раскадровка обратного дерева обхода}
+    \label{fig:reverseTreeDijkstra}
+\end{figure*}

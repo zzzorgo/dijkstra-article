@@ -1,4 +1,4 @@
-\documentclass[../article.tex]{subfiles}
+\documentclass[../../article.tex]{subfiles}
 \begin{document}
 
 \sectionabstract{Алгоритм Дейкстры}
@@ -223,149 +223,7 @@ function traverseGraph() {
 
 Будем хранить эти расстояния в словаре {\firacodebold distances}, где ключем будет {\firacodebold id} текущей вершины, а значением минимальное расстояние от нее до начальной (листинг \ref{lst:fullDijsktra}, строка \ref{code:fullDijsktra:distances}).
 
-\begin{figure*}
-    \centering
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ -> [invisibleEdge, edge label=7] b [disabledNode],
-            b -> [invisibleEdge, edge label=11, inner sep=1pt] c [disabledNode],
-            b -> [invisibleEdge, edge label=2] d [disabledNode],
-            d -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
-            f [disabledNode] -> [invisibleEdge, edge label=7, inner sep=1.5pt] g [disabledNode],
-            g -> [invisibleEdge, edge label=4] h [disabledNode],
-            g -> [invisibleEdge, edge label=8] i [disabledNode],
-            a⁰ -> [invisibleEdge, edge label=5] f,
-        }
-        \caption{Шаг 1}
-        \label{fig:reverseTreeDijkstra1}
-        \vspace*{1cm}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ [reverseNode, selected] <- [edge label=7] b⁷,
-            b⁷ -> [invisibleEdge, edge label=11, inner sep=1pt] c [disabledNode],
-            b⁷ -> [invisibleEdge, edge label=2] d [disabledNode],
-            d -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
-            f⁵ -> [invisibleEdge, edge label=7, inner sep=1.5pt] g [disabledNode],
-            g -> [invisibleEdge, edge label=4] h¹⁰⁰,
-            g -> [invisibleEdge, edge label=8] i [disabledNode],
-            a⁰ <- [edge label=5] f⁵,
-            h¹⁰⁰ -> [edge label=100] a⁰,
-        }
-        \caption{Шаг 2}
-        \label{fig:reverseTreeDijkstra2}
-        \vspace*{1cm}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ [reverseNode] <- [edge label=7] b⁷,
-            b⁷ <- [edge label=11, inner sep=1pt, invisibleEdge] c [disabledNode],
-            b⁷ <- [edge label=2, invisibleEdge] d [disabledNode],
-            d -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
-            f⁵ [reverseNode, selected] <- [edge label=7, inner sep=1.5pt] g¹²,
-            g¹² -> [invisibleEdge, edge label=4] h¹⁰⁰,
-            g¹² -> [invisibleEdge, edge label=8] i [disabledNode],
-            a⁰ <- [edge label=5, reverseEdge] f⁵,
-            h¹⁰⁰ -> [edge label=100] a⁰,
-        }
-        \caption{Шаг 3}
-        \label{fig:reverseTreeDijkstra3}
-        \vspace*{1cm}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ [reverseNode] <- [edge label=7, reverseEdge] b⁷ [reverseNode, selected],
-            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
-            b⁷ <- [edge label=2] d⁹,
-            d⁹ -> [invisibleEdge, edge label=1, inner sep=1.5pt] e [disabledNode],
-            f⁵ [reverseNode] <- [edge label=7, inner sep=1.5pt] g¹²,
-            g¹² -> [invisibleEdge, edge label=4] h¹⁰⁰,
-            g¹² -> [invisibleEdge, edge label=8] i [disabledNode],
-            a⁰ <- [edge label=5, reverseEdge] f⁵,
-            h¹⁰⁰ -> [edge label=100] a⁰,
-        }
-        \caption{Шаг 4}
-        \label{fig:reverseTreeDijkstra4}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ [reverseNode] <- [edge label=7, reverseEdge] b⁷ [reverseNode],
-            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
-            b⁷ <- [edge label=2, reverseEdge] d⁹ [reverseNode, selected],
-            d⁹ <- [edge label=1, inner sep=1.5pt] e¹⁰,
-            f⁵ [reverseNode] <- [edge label=7, inner sep=1.5pt] g¹²,
-            g¹² -> [invisibleEdge, edge label=4] h¹⁰⁰,
-            g¹² -> [invisibleEdge, edge label=8] i [disabledNode],
-            a⁰ <- [edge label=5, reverseEdge] f⁵,
-            h¹⁰⁰ -> [edge label=100] a⁰,
-        }
-        \caption{Шаг 5}
-        \label{fig:reverseTreeDijkstra5}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ [reverseNode] <- [edge label=7, reverseEdge] b⁷ [reverseNode],
-            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
-            b⁷ <- [edge label=2, reverseEdge] d⁹ [reverseNode],
-            d⁹ <- [edge label=1, inner sep=1.5pt, reverseEdge] e¹⁰ [reverseNode, selected],
-            f⁵ [reverseNode] <- [edge label=7, inner sep=1.5pt] g¹²,
-            g¹² -> [invisibleEdge, edge label=4] h¹⁰⁰,
-            g¹² -> [invisibleEdge, edge label=8] i [disabledNode],
-            a⁰ <- [edge label=5, reverseEdge] f⁵,
-            h¹⁰⁰ -> [edge label=100] a⁰,
-        }
-        \caption{Шаг 6}
-        \label{fig:reverseTreeDijkstra6}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ [reverseNode] <- [edge label=7, reverseEdge] b⁷ [reverseNode],
-            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
-            b⁷ <- [edge label=2, reverseEdge] d⁹ [reverseNode],
-            d⁹ <- [edge label=1, inner sep=1.5pt, reverseEdge] e¹⁰ [reverseNode],
-            f⁵ [reverseNode] <- [edge label=7, inner sep=1.5pt, reverseEdge] g¹² [reverseNode, selected],
-            g¹² <- [edge label=4] h¹⁶,
-            g¹² <- [edge label=8] i²⁰,
-            a⁰ <- [edge label=5, reverseEdge] f⁵,
-            h¹⁶ -> [invisibleEdge, edge label=100] a⁰,
-        }
-        \caption{Шаг 7}
-        \label{fig:reverseTreeDijkstra7}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \styledgraph{
-            a⁰ [reverseNode] <- [edge label=7, reverseEdge] b⁷ [reverseNode],
-            b⁷ <- [edge label=11, inner sep=1pt] c¹⁸,
-            b⁷ <- [edge label=2, reverseEdge] d⁹ [reverseNode],
-            d⁹ <- [edge label=1, inner sep=1.5pt, reverseEdge] e¹⁰ [reverseNode],
-            f⁵ [reverseNode] <- [edge label=7, inner sep=1.5pt, reverseEdge] g¹² [reverseNode],
-            g¹² <- [edge label=4, reverseEdge] h¹⁶ [reverseNode, selected],
-            g¹² <- [edge label=8] i²⁰,
-            a⁰ <- [edge label=5, reverseEdge] f⁵,
-            h¹⁶ -> [invisibleEdge, edge label=100] a⁰,
-        }
-        \caption{Шаг 8}
-        \label{fig:reverseTreeDijkstra8}
-    \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-        \begin{styledtikz}
-            \begin{scope}[
-                node distance=7pt,
-            ]
-                \node [baseNode, minimum size=5pt] (abc) {};
-                \node [right=5pt of abc, font=\footnotesize] {добавленные в {\firacodebold distances}};
-                \node [baseNode, below=of abc, minimum size=5pt, disabledNode] (bca) {};
-                \node [right=5pt of bca,font=\footnotesize] {еще не открытые алгоритмом};
-                \node [baseNode, below=of bca, minimum size=5pt, reverseNode] (hhh) {};
-                \node [right=5pt of hhh, font=\footnotesize] {посещенные ({\firacodebold visited = true})};
-                \node [baseNode, below=of hhh, minimum size=5pt, reverseNode, selected] (yty) {};
-                \node [right=5pt of yty, font=\footnotesize] {текущая ({\firacodebold currentNode})};
-            \end{scope}
-        \end{styledtikz}
-    \end{subfigure}
-    \caption{Раскадровка обратного дерева обхода}
-    \label{fig:reverseTreeDijkstra}
-\end{figure*}
+\subimport{/}{dijkstra-steps.tex}
 
 Как и в предыдущем алгоритме поиска пути в ширину (листинг \ref{lst:bfsWeightedRandomPath}), как только мы нашли целевую вершину, наступает время восстановления искомого пути и завершения алгоритма (строки \ref{code:fullDijsktra:path:start} - \ref{code:fullDijsktra:path:end}).
 
@@ -379,16 +237,18 @@ function traverseGraph() {
     \centering
     \begin{styledtikz}
         \begin{scope}[local bounding box=graph1, spring layout]
-            \node (a) [baseNode] {\splittext{a}{100}};
-            \node (start) [baseNode, reverseNode] {start};
-            \node (b) [baseNode] {b};
-            \node (c) [baseNode, reverseNode] {c};
-            \node (d) [baseNode, disabledNode, dashedPath] {};
-            \node (e) [baseNode, disabledNode, dashedPath] {};
-            \node (f) [baseNode, disabledNode, dashedPath] {};
-            \node (g) [baseNode, disabledNode, dashedPath] {};
-            \node (cc) [baseNode, disabledNode, dashedPath] {};
-            \node (end) [baseNode] {end};
+            \begin{scope}[every node/.style={baseNode}]
+                \node (a) {\splittext{a}{100}};
+                \node (start) [reverseNode] {start};
+                \node (b) {b};
+                \node (c) [reverseNode] {c};
+                \node (d) [disabledNode, dashedPath] {};
+                \node (e) [disabledNode, dashedPath] {};
+                \node (f) [disabledNode, dashedPath] {};
+                \node (g) [disabledNode, dashedPath] {};
+                \node (cc) [disabledNode, dashedPath] {};
+                \node (end) {end};
+            \end{scope}
 
             \styledgraphraw[2.1cm][spring layout]{
                 (start) -> [reverseEdge, edge label=50] (b),
