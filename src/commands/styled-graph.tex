@@ -1,6 +1,6 @@
 \newenvironmentx{styledtikz}{
     \begin{center}
-    \begin{tikzpicture}
+    \begin{tikzpicture}[every text node part/.style={align=center}]
     \begin{scope}[
         baseNode/.style={
             circle, draw, very thick, accentColor, minimum size=9mm,
@@ -36,16 +36,24 @@
     \end{center}
 }
 
+\newcommandx{\styledgraphraw}[3][1=1.5cm, 2=tree layout]{
+    \graph [
+        #2,
+        % sibling distance=#1,
+        node distance=#1,
+        level distance=#1,
+        nodes={baseNode},
+    ]
+    { #3 };
+}
+
 \newcommandx{\styledgraph}[3][1=1.5cm, 2=tree layout]{
     \begin{styledtikz}
-        \graph [
-            #2,
-            % sibling distance=#1,
-            node distance=#1,
-            level distance=#1,
-            nodes={baseNode},
-        ]
-        { #3 };
-            % \draw[->] (b) -- node[midway] {+1} (f);
+        \styledgraphraw[#1][#2]{#3};
+        % \draw[->] (b) -- node[midway] {+1} (f);
     \end{styledtikz}
+}
+
+\newcommand{\splittext}[2]{
+    #1 \\ [-5pt] {\tiny #2}
 }

@@ -376,47 +376,30 @@ function traverseGraph() {
 Раскадровка построения обратного дерева обхода для нашего случая приведена на рисунке \ref{fig:reverseTreeDijkstra}, а "перестановку" ссылки parent можно увидеть для вершины h при переходе от шага 6 (рис. \ref{fig:reverseTreeDijkstra6}) к шагу 7 (рис. \ref{fig:reverseTreeDijkstra7}).
 
 \begin{figure}
-    \begin{tikzpicture}
-    \begin{scope}[
-        baseNode/.style={
-            circle, draw, very thick, accentColor, minimum size=9mm,
-            text=textColor, font=\bfseries,
-            pattern=hatch, pattern color={accentColor!70}, hatch size=4pt,
-        },
-        every edge/.style={
-            draw, shorten <=1pt,>={Stealth[round]},very thick,accentColor, inner sep=0.5pt, font=\bfseries,
-        },
-        reverseEdge/.style={secondaryAccentColor},
-        reverseNode/.style={
-            secondaryAccentColor,
-            pattern=hatch, pattern color={secondaryAccentColor!70}, hatch size=4pt,
-            text=textColor,
-        },
-        disabledEdge/.style={secondaryColor},
-        disabledNode/.style={
-            secondaryColor,
-            pattern=hatch, pattern color={secondaryColor!70}, hatch size=4pt,
-        },
-        invisibleEdge/.style={backgroundColor, text=backgroundColor},
-        invisibleNode/.style={backgroundColor, fill=backgroundColor, text=backgroundColor},
-        dashedPath/.style={densely dashed},
-    ]
-        \begin{scope}[local bounding box=graph1]
-            \graph [
-                spring layout,
-                sibling distance=2cm,
-                node distance=2cm,
-                nodes={baseNode},
-            ] {
-                start [reverseNode] -> [reverseEdge, edge label=50] b,
-                start [reverseNode] -> [reverseEdge, edge label=10] c [reverseNode],
-                c [reverseNode] -> [reverseEdge, edge label=20] a,
-                c -> [reverseEdge, edge label=10] end,
+    \centering
+    \begin{styledtikz}
+        \begin{scope}[local bounding box=graph1, spring layout]
+            \node (a) [baseNode] {\splittext{a}{100}};
+            \node (start) [baseNode, reverseNode] {start};
+            \node (b) [baseNode] {b};
+            \node (c) [baseNode, reverseNode] {c};
+            \node (d) [baseNode, disabledNode, dashedPath] {};
+            \node (e) [baseNode, disabledNode, dashedPath] {};
+            \node (f) [baseNode, disabledNode, dashedPath] {};
+            \node (g) [baseNode, disabledNode, dashedPath] {};
+            \node (cc) [baseNode, disabledNode, dashedPath] {};
+            \node (end) [baseNode] {end};
 
-                b -> [disabledEdge, dashedPath] e [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] f [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] g [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] end,
-        
-                a -> [disabledEdge, dashedPath] cc [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] d [disabledNode, dashedPath, text opacity=0] -> [disabledEdge, dashedPath] end,
-                end,
+            \styledgraphraw[2.1cm][spring layout]{
+                (start) -> [reverseEdge, edge label=50] (b),
+                (start) -> [reverseEdge, edge label=10] (c),
+                (c) -> [reverseEdge, edge label=20, near start] (a),
+                (c) -> [reverseEdge, edge label=10] (end),
+
+                (b) -> [disabledEdge, dashedPath] (e) -> [disabledEdge, dashedPath] (f) -> [disabledEdge, dashedPath] (g) -> [disabledEdge, dashedPath] (end),
+
+                (a) -> [disabledEdge, dashedPath] (cc) -> [disabledEdge, dashedPath] (d) -> [disabledEdge, dashedPath] (end),
+                (end),
             };
             % \node[inner sep=0pt, ellipse,fit=(start) (c) (end)] {};
             % \begin{scope}[
@@ -486,8 +469,7 @@ function traverseGraph() {
         \matrix[at={(graph1.south)}] {
             \pic {centered};\\
         };
-    \end{scope}
-    \end{tikzpicture}
+    \end{styledtikz}
     \caption{Пути во взвешенном графе от {\firacodebold a} к {\firacodebold h}}
     \label{fig:dijkstraProve}
 \end{figure}
