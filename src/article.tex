@@ -4,8 +4,6 @@
 \usepackage{float}
 \usepackage{xargs}
 
-\usepackage{lipsum}
-
 \import{preambule/}{graphics.tex}
 \import{preambule/defaults/}{index.tex}
 \import{preambule/}{listing.tex}
@@ -19,9 +17,10 @@
 \import{commands/}{hatch-pattern.tex}
 \import{commands/}{twocolumn-page-break.tex}
 \import{commands/}{styled-graph.tex}
+\import{commands/}{http-link.tex}
 
 \title{Алгоритм Дейкстры}
-% \date{February 2014}
+\date{\vspace{-5ex}}
 % \author{Zzzorgo \thanks{thanks to bro}}
 
 \usepackage{subfiles}
@@ -31,19 +30,39 @@
 \begin{document}
 
 \begin{titlepage}
-    \maketitle
-    \begin{abstract}
-        Какая-то статья
-    \end{abstract}
-    \listoffigures
+    \pagecolor{accentColor}
+    \vspace*{5cm}
+    {\titlefont \textcolor{backgroundColor}{Алгоритм Дейкстры}}
+    \vspace{0.5cm}
+
+    \textcolor{backgroundColor}{\Large Коротко  (ну вообще-то не очень) и ясно ищем кратчайший путь в графе}
+    \vfill
+    \textcolor{backgroundColor}{{\large © zzzorgo 2022}}
+    \clearpage
+
+    \pagecolor{backgroundColor}
+    \vspace*{5cm}
+    {\titlefont Алгоритм Дейкстры}
+    \vspace{0.5cm}
+
+    \Large Коротко  (ну вообще-то не очень) и ясно ищем кратчайший путь в графе
+    \vfill
+    {\large © zzzorgo 2022}
+
+    \clearpage
+    \newgeometry{textwidth=10cm, onecolumn, top=1.5cm, bottom=2.5cm}
+    \pagecolor{backgroundColor}
+    \vspace*{\fill}
     \tableofcontents
+    \vspace*{\fill}
+    \restoregeometry
+    \clearpage
 \end{titlepage}
+
 
 \subfile{sections/introduction/introduction.tex}
 \subfile{sections/tree/tree.tex}
 \subfile{sections/graph/graph.tex}
 \subfile{sections/dijkstra/dijkstra.tex}
-
-\fontweight{\mainfontname}{Black}{Lorem}
 
 \end{document}
