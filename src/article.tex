@@ -18,6 +18,7 @@
 \import{commands/}{twocolumn-page-break.tex}
 \import{commands/}{styled-graph.tex}
 \import{commands/}{http-link.tex}
+\import{commands/}{styled-title-page.tex}
 
 \title{Алгоритм Дейкстры}
 \date{\vspace{-5ex}}
@@ -29,38 +30,8 @@
 
 \begin{document}
 
-\begin{titlepage}
-    \pagecolor{accentColor}
-    \vspace*{5cm}
-    {\titlefont \textcolor{backgroundColor}{Алгоритм Дейкстры}}
-    \vspace{0.5cm}
+\import{}{title-pages.tex}
 
-    \textcolor{backgroundColor}{\Large Коротко  (ну вообще-то не очень) и ясно ищем кратчайший путь в графе}
-    \vfill
-    \textcolor{backgroundColor}{{\large © zzzorgo 2022}}
-    \clearpage
-
-    \pagecolor{backgroundColor}
-    \vspace*{5cm}
-    {\titlefont Алгоритм Дейкстры}
-    \vspace{0.5cm}
-
-    \Large Коротко  (ну вообще-то не очень) и ясно ищем кратчайший путь в графе
-    \vfill
-    {\large © zzzorgo 2022}
-
-    \clearpage
-    \newgeometry{textwidth=10cm, onecolumn, top=1.5cm, bottom=2.5cm}
-    \pagecolor{backgroundColor}
-    \vspace*{\fill}
-    \tableofcontents
-    \vspace*{\fill}
-    \restoregeometry
-    \clearpage
-\end{titlepage}
-
-
-\subfile{sections/introduction/introduction.tex}
 \subfile{sections/tree/tree.tex}
 \subfile{sections/graph/graph.tex}
 \subfile{sections/dijkstra/dijkstra.tex}

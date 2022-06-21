@@ -1,0 +1,48 @@
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \styledtitlepage{accentColor}{backgroundColor}
+    \styledtitlepage{backgroundColor}{textColor}
+
+    \newgeometry{textwidth=10cm, onecolumn, top=0cm, bottom=2.5cm}
+
+    \vspace*{\fill}
+    \tableofcontents
+    \vspace*{\fill}
+
+    \renewcommand{\abstractname}{}
+    \begin{abstract}
+        \def \pluralsightArticleUrl {https://www.pluralsight.com/content/dam/pluralsight2/landing-pages/offers/flow/pdf/Pluralsight\_20Patterns\_ebook.pdf}
+
+        \def \repourl {https://github.com/zzzorgo/dijkstra-article}
+
+        \newgeometry{textwidth=10cm, onecolumn, top=-2cm, bottom=2.5cm}
+
+        \setlength{\parskip}{0.5cm}
+        \setlength{\parindent}{0pt}
+        \setlength{\columnsep}{1.3cm}
+        \setlength{\voffset}{0pt}
+        \noindent
+
+        \vspace*{\fill}
+
+        \section*{Введение}
+
+        Когда я в очередной раз понял, что пора менять работу, то как обычно начал готовиться к собеседованиям и столкнулся с проблемой: есть определенный набор тем, которые я бы хотел разобраться максимально быстро, но нет точечных материалов, эффективно заполняющих эти пробелы. Одна из таких тем это тот самый (как выяснилось, не сложный) алгоритм Дейкстры.
+
+        Конечно, я гуглил различные статьи и смотрел книги, которые могли бы его объяснить. Почему-то ни одно из найденных мной объяснений не отличалось понятностью. В какой-то момент я добрался до этого алгоритме в книге Стивена Скиены "Алгоритмы. Руководство по разработке". Книга написано крайне\ldots странно. Все примеры кода с однобуквенными переменными как будто специально обфусцированы, а объяснения хода выполнения не полные. Не хочу преуменьшить мастерства автора в написании алгоритмов, он явно в этом хорош, но книга вышла не самой простой.
+
+        В итоге, посидев над кодом в IDE и изрядно почитав самых разных объяснений, ко мне пришло понимание, которым я и хочу поделиться. Надеюсь мои страдания помогут сделать эту статью более понятной, чем остальные источники.
+
+        \subsection*{Ссылки}
+
+        Стоит сказать, что за оформление статьи надо отдать должное прекрасно сверстанной статье от Pluralsight: \httplink{\pluralsightArticleUrl}{"20 patterns to watch for in your engineering team"}.
+
+        Сама статья написана с помощью \LaTeX и ее исходный код, а также все код из листингов можно найти у меня на \httplink{\repourl}{github}.
+
+        \vspace*{\fill}
+    \end{abstract}
+
+    \restoregeometry
+    \clearpage
+    \pagenumbering{arabic}
+\end{titlepage}
