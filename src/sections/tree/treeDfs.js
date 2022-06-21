@@ -1,37 +1,41 @@
+/**
+ * Поиск в глубину
+ */
+
 const i = {
-    data: 'i',
+    id: 'i',
     children: [],
 };
 const h = {
-    data: 'h',
+    id: 'h',
     children: [],
 };
 const e = {
-    data: 'e',
+    id: 'e',
     children: [],
 };
 const g = {
-    data: 'g',
+    id: 'g',
     children: [h, i],
 };
 const d = {
-    data: 'd',
+    id: 'd',
     children: [e],
 };
 const c = {
-    data: 'c',
+    id: 'c',
     children: [],
 };
 const f = {
-    data: 'f',
+    id: 'f',
     children: [g],
 };
 const b = {
-    data: 'b',
+    id: 'b',
     children: [c, d],
 };
 const a = {
-    data: 'a',
+    id: 'a',
     children: [b, f],
 };
 
@@ -43,9 +47,8 @@ function traverseTree() {
 
     while (nextNodes.length !== 0) {
         currentNode = nextNodes.pop();
-        console.log(currentNode)
 
-        if (currentNode.data === 'target data') {
+        if (currentNode.id === 'h') {
             return currentNode;
         }
 
