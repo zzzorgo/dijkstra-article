@@ -44,10 +44,9 @@ function traverseGraphDfs() {
 
     while (nextNodes.length !== 0) {
         currentNode = nextNodes.pop();
-        console.log(currentNode.data)
         currentNode.visited = true;
 
-        if (currentNode.data === 'target data') {
+        if (currentNode.id === 'h') {
             return currentNode;
         }
 

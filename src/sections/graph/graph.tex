@@ -4,7 +4,7 @@
 % todo заменить дефис на тире
 
 \sectionabstract{Обход графов}
-{Как и в случае с деревьями, графы обходят не просто так. Посмотрим как найти искомую вершину в графе и проведем аналогию с обходом деревьев.}
+{Как и в случае с деревьями, графы обходят не просто так. Посмотрим как найти целевую вершину в графе и проведем аналогию с обходом деревьев.}
 
 \subsection{Структура для обхода}
 
@@ -17,7 +17,7 @@
     }
     \begin{lstlisting}[caption={Структура вершины графа}, label={lst:graphStructureTreeLike}]
 interface Node {
-    data: string;
+    id: string;
     neighbors: Node[];
     visited?: boolean;
 }
@@ -27,9 +27,9 @@ const startingNode: Node = // ...
     \end{lstlisting}
 \end{ruledelement}
 
-Как видно из листинга \ref{lst:graphStructureTreeLike}, поменялось не очень много. В классическом понимании у графа нет корня, но в наших задачах есть вершина {\firacodebold startingNode}, с которой мы начинаем обход. У элементов нет потомков, только соседние элементы {\firacodebold neighbors}. Тем не менее, если исключить переименовывание это та же структура (про поле {\firacodebold visited} поговорим чуть позже), а значит и обойти ее можно так же?
+Как видно из листинга \ref{lst:graphStructureTreeLike}, поменялось не очень много. В классическом понимании у графа нет корня ({\firacodebold treeRoot}), но в наших задачах есть вершина {\firacodebold startingNode}, с которой мы начинаем обход. Также, у элементов нет потомков, только соседние элементы {\firacodebold neighbors}. Тем не менее, если исключить переименовывание это та же структура (про поле {\firacodebold visited} поговорим чуть позже), а значит и обойти ее можно так же, как дерево?
 
-На самом деле не совсем так. Из определения деревьев следует ограничение на то, какие именно элементы могут быть потомками для других элементов. То есть например вершина-потомок не может иметь в качестве своего потомка своего же родителя. Также вершина дереве не может иметь больше одного родителя. Наличие же таких связи в итоговом дереве автоматически превратит его в граф.
+На самом деле не совсем так. Из определения деревьев следует ограничение на то, какие именно элементы (вершины) могут быть потомками для других элементов. То есть например вершина-потомок не может иметь в качестве своего потомка своего же родителя. Также вершина дерева не может иметь больше одного родителя. Наличие же таких связи в итоговом дереве автоматически превратит его в граф.
 
 \begin{figure}
     \styledgraph{
@@ -50,65 +50,60 @@ const startingNode: Node = // ...
     \label{fig:treeTurningToGraph}
 \end{figure}
 
-На рисунке \ref{fig:treeTurningToGraph} хорошо видно как это происходит при, например, добавление трех связей (ребер): от {\firacodebold c} к {\firacodebold a}, от {\firacodebold i} к {\firacodebold f} и от {\firacodebold a} к {\firacodebold h}. Так же на этом рисунке более явно указано направление связи, где стрелка идет от элемента-родителя до элемента-потомка. Добавление этих связей в коде можно выразить в коде (листинг \ref{lst:treeTurningToGraph}).
+На рисунке \ref{fig:treeTurningToGraph} хорошо видно как это происходит при, например, добавление трех связей (ребер) к уже знакомому нам дереву: от {\firacodebold c} к {\firacodebold a}, от {\firacodebold i} к {\firacodebold f} и от {\firacodebold a} к {\firacodebold h}. Так же на этом рисунке более явно указано направление ребер, где стрелка идет от элемента-родителя до элемента-потомка. Добавление этих ребер можно выразить в коде (листинг \ref{lst:treeTurningToGraph}).
 
-\begin{ruledelement}
+\begin{figure*}
     \lstset{
-        emph={neighbors,push},
-        emphstyle={\textbf}
+        emph={traverseGraph, visited, filter},
+        emphstyle=\textbf,
     }
-    \begin{lstlisting}[caption={Добавление связей превращающих дерево в грфа}, label={lst:treeTurningToGraph}]
-// `visited` field is omitted as
-// it is optional and not used yet
-const nodeI = {
-    data: 'i',
-    neighbors: [],
-};
-const nodeH = {
-    data: 'h',
-    neighbors: [],
-};
-const nodeE = {
-    data: 'e',
-    neighbors: [],
-};
-const nodeG = {
-    data: 'g',
-    neighbors: [nodeH, nodeI],
-};
-const nodeD = {
-    data: 'd',
-    neighbors: [nodeE],
-};
-const nodeC = {
-    data: 'c',
-    neighbors: [],
-};
-const nodeF = {
-    data: 'f',
-    neighbors: [nodeG],
-};
-const nodeB = {
-    data: 'b',
-    neighbors: [nodeC, nodeD],
-};
-const nodeA = {
-    data: 'a',
-    neighbors: [nodeB, nodeF],
-};
+    \begin{ruledelement}
+        \begin{lstlisting}[caption={Обход графа в глубину}, label={lst:graphDfs}]
+const startingNode = nodeA;
 
-nodeI.neighbors.push(nodeF);
-nodeC.neighbors.push(nodeA);
-nodeA.neighbors.push(nodeH);
-    \end{lstlisting}
-\end{ruledelement}
+function traverseGraph() {
+    let currentNode = null;
+    const nextNodes = [startingNode];
 
+    while (nextNodes.length !== 0) {
+        currentNode = nextNodes.pop();
+        currentNode.visited = true; (*\label{code:graphDfs:setVisited}*)
 
-Что ж, после этих манипуляций структура дерева не сильно поменялась, как и алгоритм ее обхода, хоть это теперь и граф.
+        if (currentNode.id === 'h') {
+            return currentNode;
+        }
 
-\subsection{Обход в глубину}
+        const nodesToAdd = currentNode.neighbors (*\label{code:graphDfs:visitedUsed:start}*)
+            .filter(nextNode => !nextNode.visited);
 
-Предположим, что мы не стали бы менять наш алгоритм и подсунули ему наш граф. В таком случае все работает так же как и для дерева до определенного момента. Первым делом наш обход в глубину пойдет по правой ветке графа и дойдет до {\firacodebold nodeF} на второй итерации. На четвертой итерации он дойдет до обработки {\firacodebold nodeI}. В момент обработки элемента {\firacodebold nodeI} алгоритм добавит всех его потомков, то есть включая {\firacodebold nodeF} в стек обработки {\firacodebold nextNodes}. То есть мы снова вернемся к обработке элемента {\firacodebold nodeF} и снова добавим всех потомков {\firacodebold nodeF} на обработку, а дальше потомков потомков, и {\firacodebold nodeI} тоже. В итоге получается бесконечный цикл.
+        nextNodes.push(...nodesToAdd); (*\label{code:graphDfs:visitedUsed:end}*)
+    }
+
+    return null;
+}
+        \end{lstlisting}
+    \end{ruledelement}
+
+\end{figure*}
+
+\begin{figure}
+    \begin{ruledelement}
+        \lstset{
+            emph={neighbors,push},
+            emphstyle={\textbf},
+            firstnumber=38,
+        }
+        \begin{lstlisting}[caption={Добавление связей превращающих дерево в грфа}, label={lst:treeTurningToGraph}]
+// previous tree declaration...
+
+i.neighbors.push(f);
+c.neighbors.push(a);
+a.neighbors.push(h);
+
+const startingNode = a;
+        \end{lstlisting}
+    \end{ruledelement}
+\end{figure}
 
 \begin{figure}
     \styledgraph{
@@ -129,63 +124,33 @@ nodeA.neighbors.push(nodeH);
     \label{fig:graphBfsOrder}
 \end{figure}
 
-Если же мы исключим из обхода уже обработанные вершины, то второй раз в {\firacodebold nodeF} мы не попадем, собственно это и есть все отличие (листинг \ref{lst:graphDfs}).
+Что ж, после этих манипуляций структура дерева не сильно поменялась, как и алгоритм ее обхода, хоть это теперь и граф.
 
-В момент обработки очередного элемента {\firacodebold currentNode} мы выставляем флаг {\firacodebold visited} в значение {\firacodebold true} (строка 9), чтобы на последующих итерациях не добавлять обработанный элемент в стек {\firacodebold nextNodes} (строки 15-18). Порядок обхода в данном случае не отличается от порядка обхода того же дерева и можно посмотреть на рисунке \ref{fig:treeDfsOrder} (хотя он мог поменяться, но для простоты мы выбрали такой граф, где этого не происходит).
+\subsection{Обход в глубину}
+
+Предположим, что мы не стали бы менять наш алгоритм и подсунули ему наш граф. В таком случае все работает так же как и для дерева до определенного момента. Первым делом наш обход в глубину пойдет по правой ветке графа и дойдет до вершины {\firacodebold f} на второй итерации. На четвертой итерации он дойдет до обработки вершины {\firacodebold i}. В момент обработки элемента {\firacodebold i} алгоритм добавит всех его потомков, то есть включая вершину {\firacodebold f} в стек обработки {\firacodebold nextNodes}. То есть мы снова вернемся к обработке элемента {\firacodebold f} и снова добавим всех потомков {\firacodebold f} на обработку, а дальше потомков его потомков, включая вершину{\firacodebold i}. В итоге получается бесконечный цикл.
+
+Если же мы исключим из обхода уже обработанные вершины, то второй раз в вершину {\firacodebold f} мы не попадем, собственно, это и есть все отличие (листинг \ref{lst:graphDfs}).
+
+В момент обработки очередного элемента {\firacodebold currentNode} мы выставляем флаг {\firacodebold visited} в значение {\firacodebold true} (строка \ref{code:graphDfs:setVisited}), чтобы на последующих итерациях не добавлять обработанный элемент в стек {\firacodebold nextNodes} (строки \ref{code:graphDfs:visitedUsed:start}-\ref{code:graphDfs:visitedUsed:end}). Порядок обхода в данном случае не отличается от порядка обхода дерева из раздела \ref{tree} и можно посмотреть на рисунке \ref{fig:treeDfsOrder} (хотя он мог поменяться, но для простоты мы выбрали такой граф, где этого не происходит).
 
 \subsection{Обход в ширину}
 
-\begin{figure*}[h]
-    \lstset{
-        emph={traverseGraph, visited, filter},
-        emphstyle=\textbf,
-    }
+Кажется довольно очевидно, что обход ширину, как и для деревьев, будет отличаться лишь одной сточкой (листинг \ref{lst:graphBfsDiff}). Однако, из-за ребра {\firacodebold a → h} порядок обхода нашего графа в ширину изменится. На первой же итерации обхода алгоритм добавит всех потомков элемента {\firacodebold a} на в очередь {\firacodebold nextNodes}, включая элемент {\firacodebold h}. А значит он будет обработан одним из первых (рис. \ref{fig:graphBfsOrder}).
+
+\begin{figure}
     \begin{ruledelement}
-        \begin{lstlisting}[caption={Обход графа в глубину}, label={lst:graphDfs}]
-const startingNode = nodeA;
-
-function traverseGraph() {
-    let currentNode = null;
-    const nextNodes = [startingNode];
-
-    while (nextNodes.length !== 0) {
-        currentNode = nextNodes.pop();
-        currentNode.visited = true;
-
-        if (currentNode.data === 'h') {
-            return currentNode;
+        \lstset{
+            emph={shift},
+            emphstyle=\textbf,
+            firstnumber=8,
         }
-
-        const nodesToAdd = currentNode.neighbors
-            .filter(nextNode => !nextNode.visited);
-
-        nextNodes.push(...nodesToAdd);
-    }
-
-    return null;
-}
-        \end{lstlisting}
-    \end{ruledelement}
-
-\end{figure*}
-
-Кажется довольно очевидно, что обход ширину, как и для деревьев, будет отличаться лишь одной сточкой. Однако, из-за ребра {\firacodebold a -> h} порядок обхода нашего графа в ширину изменится. На первой же итерации обхода алгоритм добавит всех потомков элемента {\firacodebold nodeA} на в очередь {\firacodebold nextNodes}, включая элемент {\firacodebold nodeH}. А значит он будет обработан одним из первых (рис. \ref{fig:graphBfsOrder}).
-
-\begin{ruledelement}
-    \lstset{
-        emph={shift},
-        emphstyle=\textbf,
-        firstnumber=8,
-    }
-    \begin{lstlisting}[caption={Отличие обхода в ширину от обхода в глубину}, label={lst:graphBfsDiff}]
+        \begin{lstlisting}[caption={Отличие обхода в ширину от обхода в глубину}, label={lst:graphBfsDiff}]
 // currentNode = nextNodes.pop();
 currentNode = nextNodes.shift();
-    \end{lstlisting}
-\end{ruledelement}
-
-\subsection{Поиск пути}
-
-Помимо поиска отдельно взятой вершины графа, часто бывает полезно найти путь до этой вершины от той вершины, с которой мы начинали ({\firacodebold startingNode}). Но что такое найти путь? Будем считать, что путь это массив вершин, первый элемент которого это все та же {\firacodebold startingNode}, последний – целевая вершина, а в середине все ноды по пути.
+        \end{lstlisting}
+    \end{ruledelement}
+\end{figure}
 
 \begin{figure}
     \styledgraph{
@@ -206,7 +171,67 @@ currentNode = nextNodes.shift();
     \label{fig:pathExposure}
 \end{figure}
 
-\begin{figure*}[h]
+\begin{figure}
+    \begin{ruledelement}
+        \lstset{
+            emph={parent},
+            emphstyle=\textbf,
+        }
+        \begin{lstlisting}[caption={Структура вершины графа для поиска пути}, label={lst:graphStructureSimplePath}]
+interface Node {
+    id: string;
+    neighbors: Node[];
+    visited?: boolean;
+    parent?: Node;
+}
+        \end{lstlisting}
+    \end{ruledelement}
+\end{figure}
+
+\subsection{Поиск пути}
+
+Помимо поиска отдельно взятой вершины графа, часто бывает полезно найти еще и путь до этой вершины от той вершины, с которой мы начинали ({\firacodebold startingNode}). Но что такое найти путь? Будем считать, что путь это массив вершин, первый элемент которого это все та же {\firacodebold startingNode}, последний – целевая вершина, а в середине все промежуточные вершины, которые нужно будет пройти, чтобы дойти до целевой.
+
+\begin{figure*}
+    \lstset{
+        emph={map, parent},
+        emphstyle=\textbf,
+    }
+    \begin{ruledelement}
+        \begin{lstlisting}[caption={Обход графа в глубину и формирование обратного дерева обхода}, label={lst:graphDfsParent}]
+const startingNode = nodeA;
+
+function traverseGraph() {
+    let currentNode = null;
+    const nextNodes = [startingNode];
+
+    while (nextNodes.length !== 0) {
+        currentNode = nextNodes.pop();
+        currentNode.visited = true;
+
+        if (currentNode.id === 'h') {
+            return currentNode;
+        }
+
+        const nodesToAdd = currentNode.neighbors
+            .filter(nextNode => !nextNode.visited)
+            .map(nextNode => { (*\label{code:graphDfsParent:setParent:start}*)
+                nextNode.parent = currentNode;
+
+                return nextNode;
+            }); (*\label{code:graphDfsParent:setParent:end}*)
+
+        nextNodes.push(...nodesToAdd);
+    }
+
+    return null;
+}
+        \end{lstlisting}
+    \end{ruledelement}
+
+\end{figure*}
+
+\begin{figure*}
     \centering
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -227,6 +252,7 @@ currentNode = nextNodes.shift();
         }
         \caption{Связи {\firacodebold parent}}
         \label{fig:third}
+        \label{fig:graphDfs:parents:edges}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -234,6 +260,7 @@ currentNode = nextNodes.shift();
         }
         \caption{Обратное дерево обхода}
         \label{fig:second}
+        \label{fig:graphDfs:parents:reversedTree}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -248,72 +275,11 @@ currentNode = nextNodes.shift();
             b <- [disabledEdge] c,
         }
         \caption{Обратный путь}
-        \label{fig:first}
+        \label{fig:graphDfs:parents:reversedPath}
     \end{subfigure}
     \caption{Путь при обходе в глубину}
+    \label{fig:graphDfs:parents}
 \end{figure*}
-Предположим, что мы ищем путь от вершины {\firacodebold a} до вершины {\firacodebold h} (рис. \ref{fig:pathExposure}). Видно, что есть ровно два возможных пути, это {\firacodebold [a, h]} и {\firacodebold [a, f, g, h]}. Видно нам, но не алгоритму, так как для него входными данными является {\firacodebold startingNode}, а на каждой итерации мы обрабатываем ровно одну вершину, то после того как обходом мы нашли целевую вершину, у нас есть только конец и начало пути. Для некоторых путей, таких как {\firacodebold [a, h]} этого достаточно, но в общем случае, конечно же нет. Нужно как-то получить весь путь.
-
-
-Если подумать, то в процессе обхода мы приходим в любую вершину (кроме первой) от ее предшественника, и такой предшественник для вершины всегда один, так как мы не добавляем вершину в {\firacodebold nextNodes} больше одного раза. И именно это свойство можно использовать. Для этого сохранения нам понадобится изменить изначальную структуру вершины (листинг \ref{lst:graphStructureSimplePath}), добавив в нее поле {\firacodebold parent} для хранения предшественника.
-
-\begin{ruledelement}
-    \lstset{
-        emph={parent},
-        emphstyle=\textbf,
-    }
-    \begin{lstlisting}[caption={Структура вершины графа для поиска пути}, label={lst:graphStructureSimplePath}]
-interface Node {
-    data: string;
-    neighbors: Node[];
-    visited?: boolean;
-    parent?: Node;
-}
-    \end{lstlisting}
-\end{ruledelement}
-
-Обойдя граф в глубину целиком (допустим мы не нашли целевую вершину), мы добавим к исходной структуре данных связи parent, выделенные на рисунке \ref{fig:third}. Эти же связи вынесены в отдельную структуру (будем называть ее обратным деревом обхода) на рисунке \ref{fig:second}, а на рисунке \ref{fig:first} выделена только интересующая нас часть этого обратного дерева обхода. Код, который необходимо добавить к обходу в глубину для формирования этой структуры находится на листинге \ref{lst:graphDfsParent} строки с 17 по 21.
-
-\begin{figure*}
-    \lstset{
-        emph={map, parent},
-        emphstyle=\textbf,
-    }
-    \begin{ruledelement}
-        \begin{lstlisting}[caption={Обход графа в глубину и формирование обратного дерева обхода}, label={lst:graphDfsParent}]
-const startingNode = nodeA;
-
-function traverseGraph() {
-    let currentNode = null;
-    const nextNodes = [startingNode];
-
-    while (nextNodes.length !== 0) {
-        currentNode = nextNodes.pop();
-        currentNode.visited = true;
-
-        if (currentNode.data === 'h') {
-            return currentNode;
-        }
-
-        const nodesToAdd = currentNode.neighbors
-            .filter(nextNode => !nextNode.visited)
-            .map(nextNode => {
-                nextNode.parent = currentNode;
-
-                return nextNode;
-            });
-
-        nextNodes.push(...nodesToAdd);
-    }
-
-    return null;
-}
-        \end{lstlisting}
-    \end{ruledelement}
-
-\end{figure*}
-
-И все таки вернемся к поиску пути от вершины {\firacodebold a} до вершины {\firacodebold h}. Мы начали обходить наш граф в глубину, параллельно строить обратное дерево обхода и в определенный момент дошли до целевой вершины {\firacodebold h}. На этом этапе у нас гарантированно есть выделенная на рисунке \ref{fig:first} часть обратного дерева обхода, так как именно от этих предшественников мы пришли в {\firacodebold h}. Более того, если взять вершину {\firacodebold h} и пройти по ссылкам {\firacodebold parent} вверх, мы получим искомый путь, только в обратном порядке. Изменение, которое необходимо для получения пути в прямом порядке показано на листинге \ref{lst:graphPathConstruction}
 
 \begin{figure*}
     \lstset{
@@ -323,10 +289,10 @@ function traverseGraph() {
     }
     \begin{ruledelement}
         \begin{lstlisting}[caption={Построение пути до найденной вершины}, label={lst:graphPathConstruction}]
-// if (currentNode.data === 'h') {
+// if (currentNode.id === 'h') {
 //     return currentNode;
 // }
-if (currentNode.data === 'h') {
+if (currentNode.id === 'h') {
     const pathNode = currentNode;
     const path = [];
 
@@ -342,7 +308,11 @@ if (currentNode.data === 'h') {
 
 \end{figure*}
 
-\begin{figure*}[h]
+Предположим, что мы ищем путь от вершины {\firacodebold a} до вершины {\firacodebold h} (рис. \ref{fig:pathExposure}). Видно, что есть ровно два возможных пути, это {\firacodebold [a, h]} и {\firacodebold [a, f, g, h]}. Видно нам, но не алгоритму, так как для него входными данными является {\firacodebold startingNode}, а так как на каждой итерации мы обрабатываем ровно одну вершину, то после того как мы нашли целевую вершину, у нас есть только конец и начало пути. Для некоторых путей, таких как {\firacodebold [a, h]} этого достаточно, но в общем случае, конечно же нет. Нужно как-то получить весь путь.
+
+Если подумать, то в процессе обхода мы приходим в любую вершину (кроме первой) от ее предшественника, и такой предшественник для вершины всегда один, так как мы не добавляем вершину в {\firacodebold nextNodes} больше одного раза. И именно это свойство можно использовать, сохраняя ссылку на предшественника. Для этого сохранения нам понадобится изменить изначальную структуру вершины (листинг \ref{lst:graphStructureSimplePath}), добавив в нее поле {\firacodebold parent} для хранения предшественника.
+
+\begin{figure*}
     \centering
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -370,7 +340,7 @@ if (currentNode.data === 'h') {
             b -> [bend right=22] a,
         }
         \caption{Связи {\firacodebold parent}}
-        \label{fig:third1}
+        \label{fig:graphBfs:parents:edges}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -380,7 +350,7 @@ if (currentNode.data === 'h') {
             h -> a,
         }
         \caption{Обратное дерево обхода}
-        \label{fig:second1}
+        \label{fig:graphBfs:parents:reversedTree}
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \styledgraph{
@@ -396,12 +366,17 @@ if (currentNode.data === 'h') {
             h -> a,
         }
         \caption{Обратный путь}
-        \label{fig:first1}
+        \label{fig:graphBfs:parents:reversedPath}
     \end{subfigure}
     \caption{Путь при обходе в ширину}
+    \label{fig:graphBfs:parents}
 \end{figure*}
 
-Дерево обратного обхода существует и для обхода в ширину, как и восстановление пути, но из-за другого порядка обхода мы можем найти (и в данном пример найдем) совсем другой путь. на рисунке \ref{fig:third1} выделены связи {\firacodebold parent}. В данном случа от обхода в глубину отличие лишь в том, что теперь предшественником вершины {\firacodebold h} является вершина {\firacodebold a}. Отсюда немного другое дерево обратного обхода (рис. \ref{fig:second1}) и другой найденный путь (рис. \ref{fig:first1}).
+Обойдя граф в глубину целиком (допустим мы не нашли целевую вершину), мы добавим к исходному графу несколько связей {\firacodebold parent}, выделенные на рисунке \ref{fig:graphDfs:parents:edges}. Эти же связи вынесены в отдельную структуру (будем называть ее {\bfseries обратным деревом обхода}) на рисунке \ref{fig:graphDfs:parents:reversedTree}, а на рисунке \ref{fig:graphDfs:parents:reversedPath} выделена только интересующая нас часть этого обратного дерева обхода. Код, который необходимо добавить к обходу в глубину для формирования обратного дерева обхода находится на листинге \ref{lst:graphDfsParent} строки с \ref{code:graphDfsParent:setParent:start} по \ref{code:graphDfsParent:setParent:end}.
+
+И все таки вернемся к поиску пути от вершины {\firacodebold a} до вершины {\firacodebold h}. Мы начали обходить наш граф в глубину, параллельно строить обратное дерево обхода и в определенный момент дошли до целевой вершины {\firacodebold h}. На этом этапе у нас гарантированно есть выделенная на рисунке \ref{fig:graphDfs:parents:edges} часть обратного дерева обхода, так как именно от этих предшественников мы пришли в {\firacodebold h}. Более того, если взять вершину {\firacodebold h} и пройти по ссылкам {\firacodebold parent} вверх, мы получим искомый путь, только в обратном порядке (обратный путь). Изменение, которое необходимо для получения пути в прямом порядке показано на листинге \ref{lst:graphPathConstruction}
+
+Дерево обратного обхода существует и для обхода в ширину, как и восстановление пути, но из-за другого порядка обхода мы можем найти (и в данном примере найдем) совсем другой путь. На рисунке \ref{fig:graphBfs:parents:edges} выделены связи {\firacodebold parent}. В данном случа от обхода в глубину отличие лишь в том, что теперь предшественником вершины {\firacodebold h} является вершина {\firacodebold a}. Отсюда немного другое дерево обратного обхода (рис. \ref{fig:graphBfs:parents:reversedTree}) и другой найденный путь (рис. \ref{fig:graphBfs:parents:reversedPath}).
 
 Интересно то, что с точки зрения количества вершин в найденном пути обход в ширину всегда гарантирует минимальный путь, так как он всегда вначале обходит самые близкие элементы к начальной вершине.
 
