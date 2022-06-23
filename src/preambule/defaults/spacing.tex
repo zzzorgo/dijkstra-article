@@ -1,6 +1,23 @@
 \usepackage[a4paper, left=2.5cm, right=2.5cm, top=1.5cm, bottom=2.5cm]{geometry}
 \usepackage{setspace}
 
+% footnote customization
+\makeatletter
+\renewcommand{\@makefntext}[1]{
+  \setlength{\parindent}{0pt}
+  \begin{list}{}{\setlength{\labelwidth}{6mm}
+    \setlength{\leftmargin}{\labelwidth}
+    \setlength{\labelsep}{3pt}
+    \setlength{\itemsep}{0pt}
+    \setlength{\parsep}{0pt}
+    \setlength{\topsep}{0pt}
+    \footnotesize}
+  \item[\textsuperscript\@thefnmark]#1
+  \end{list}
+}
+\makeatother
+
+% text spacings
 \renewcommand{\baselinestretch}{1.05}
 
 \setlength{\parskip}{0.5cm}
@@ -10,6 +27,7 @@
 
 \raggedright
 
+% figure placement
 \renewcommand{\topfraction}{.9}
 \renewcommand{\bottomfraction}{.7}
 \renewcommand{\textfraction}{.1}
