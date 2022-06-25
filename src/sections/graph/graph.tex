@@ -59,8 +59,6 @@ const startingNode: Node = // ...
     }
     \begin{ruledelement}
         \begin{lstlisting}[caption={Обход графа в глубину}, label={lst:graphDfs}]
-const startingNode = nodeA;
-
 function traverseGraph() {
     let currentNode = null;
     const nextNodes = [startingNode];
@@ -199,8 +197,6 @@ interface Node {
     }
     \begin{ruledelement}
         \begin{lstlisting}[caption={Обход графа в глубину и формирование обратного дерева обхода}, label={lst:graphDfsParent}]
-const startingNode = nodeA;
-
 function traverseGraph() {
     let currentNode = null;
     const nextNodes = [startingNode];
@@ -293,11 +289,11 @@ function traverseGraph() {
 //     return currentNode;
 // }
 if (currentNode.id === 'h') {
-    const pathNode = currentNode;
+    let pathNode = currentNode;
     const path = [];
 
     while(pathNode) {
-        path.ushift(pathNode);
+        path.unshift(pathNode);
         pathNode = pathNode.parent;
     }
 

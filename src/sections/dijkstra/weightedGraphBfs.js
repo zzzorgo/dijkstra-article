@@ -1,42 +1,48 @@
+/**
+ * Поиск пути в ширину во взвешенном графе
+ */
+
 const i = {
-    data: 'i',
+    id: 'i',
     edges: [],
 };
 const h = {
-    data: 'h',
+    id: 'h',
     edges: [],
 };
 const e = {
-    data: 'e',
+    id: 'e',
     edges: [],
 };
 const g = {
-    data: 'g',
+    id: 'g',
     edges: [{ nextNode: h, weight: 4 }, { nextNode: i, weight: 8 }],
 };
 const d = {
-    data: 'd',
+    id: 'd',
     edges: [{ nextNode: e, weight: 1 }],
 };
 const c = {
-    data: 'c',
+    id: 'c',
     edges: [],
 };
 const f = {
-    data: 'f',
+    id: 'f',
     edges: [{ nextNode: g, weight: 7 }],
 };
 const b = {
-    data: 'b',
+    id: 'b',
     edges: [{ nextNode: c, weight: 11 }, { nextNode: d, weight: 2 }],
 };
 const a = {
-    data: 'a',
+    id: 'a',
     edges: [{ nextNode: b, weight: 7 }, { nextNode: h, weight: 100 }, { nextNode: f, weight: 5 }],
 };
 
 i.edges.push({ nextNode: f, weight: 10 });
 c.edges.push({ nextNode: a, weight: 5 });
+// уже добавлено в edges выше
+// a.edges.push({ nextNode: h, weight: 100 }); 
 
 const startingNode = a;
 
@@ -48,7 +54,7 @@ function traverseGraph() {
         currentNode = nextNodes.shift();
         currentNode.visited = true;
 
-        if (currentNode.data === 'h') {
+        if (currentNode.id === 'h') {
             let pathNode = currentNode;
             const path = [];
 

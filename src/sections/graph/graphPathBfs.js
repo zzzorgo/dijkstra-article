@@ -1,8 +1,8 @@
 /**
- * Поиск в глубину
+ * Поиск пути в ширину
  */
 
-const i = {
+ const i = {
     id: 'i',
     neighbors: [],
 };
@@ -45,7 +45,7 @@ a.neighbors.push(h);
 
 const startingNode = a;
 
-function traverseGraphDfs() {
+function traverseGraph() {
     let currentNode = null;
     const nextNodes = [startingNode];
 
@@ -54,11 +54,24 @@ function traverseGraphDfs() {
         currentNode.visited = true;
 
         if (currentNode.id === 'h') {
-            return currentNode;
+            let pathNode = currentNode;
+            const path = [];
+
+            while(pathNode) {
+                path.unshift(pathNode);
+                pathNode = pathNode.parent;
+            }
+
+            return path;
         }
 
         const nodesToAdd = currentNode.neighbors
-            .filter(nextNode => !nextNode.visited);
+            .filter(nextNode => !nextNode.visited)
+            .map(nextNode => {
+                nextNode.parent = currentNode;
+
+                return nextNode;
+            });
 
         nextNodes.push(...nodesToAdd);
     }
@@ -66,4 +79,4 @@ function traverseGraphDfs() {
     return null;
 }
 
-console.log(traverseGraphDfs());
+console.log(traverseGraph());

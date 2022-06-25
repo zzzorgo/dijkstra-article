@@ -1,5 +1,5 @@
 /**
- * Поиск в глубину
+ * Поиск в ширину
  */
 
 const i = {
@@ -50,7 +50,7 @@ function traverseGraphDfs() {
     const nextNodes = [startingNode];
 
     while (nextNodes.length !== 0) {
-        currentNode = nextNodes.pop();
+        currentNode = nextNodes.shift();
         currentNode.visited = true;
 
         if (currentNode.id === 'h') {
