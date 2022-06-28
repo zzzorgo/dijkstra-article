@@ -8,6 +8,8 @@
         "Дейкстры",
         "emphstyle",
         "firstnumber",
+        "latexmk",
+        "lualatex",
         "unshift"
     ],
 }
