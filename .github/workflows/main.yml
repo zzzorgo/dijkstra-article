@@ -46,7 +46,7 @@ jobs:
 
       - name: Release
         id: pdf_release
-        if: github.event_name == 'tag'
+        if: github.event_name == 'push'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,7 +57,7 @@ jobs:
           draft: false
 
       - name: Upload PDF to release assets
-        if: github.event_name == 'tag'
+        if: github.event_name == 'push'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
