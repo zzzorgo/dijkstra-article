@@ -30,6 +30,7 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           root_file: src/article.tex
+          extra_fonts: fonts/*.ttf
           latexmk_use_lualatex: true
           work_in_root_file_dir: true
 
