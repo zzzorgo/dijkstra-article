@@ -1,10 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: main
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    tags: [ "v[0-9]+.[0-9]+.[0-9]+" ]
   pull_request:
     branches: [ "master" ]
 
@@ -34,8 +36,34 @@ jobs:
           args: |
             -outdir=../.output
 
-      - name: Upload PDF
+      - name: Upload PDF to job assets
+        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v3
         with:
           name: PDF
           path: .output/article.pdf
+          retention-days: 1
+
+      - name: Release
+        id: pdf_release
+        if: github.event_name == 'tag'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          prerelease: false
+          draft: false
+
+      - name: Upload PDF to release assets
+        if: github.event_name == 'tag'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.pdf_release.outputs.upload_url }}
+          asset_path: .output/article.pdf
+          asset_name: article.pdf
+          asset_content_type: application/pdf
+
