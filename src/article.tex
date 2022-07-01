@@ -10,10 +10,10 @@
 \import{preambule/defaults/}{index.tex}
 \import{preambule/}{listing.tex}
 \import{preambule/}{titles.tex}
-\import{preambule/}{header-footer.tex}
 
 \renewcommand{\thesubfigure}{\asbuk{subfigure}}
 
+\import{commands/}{underline.tex}
 \import{commands/}{section.tex}
 \import{commands/}{font-weight.tex}
 \import{commands/}{rulled-element.tex}
@@ -22,6 +22,7 @@
 \import{commands/}{styled-graph.tex}
 \import{commands/}{http-link.tex}
 \import{commands/}{styled-title-page.tex}
+\import{commands/}{header-footer.tex}
 
 \title{\dijkstratitle}
 \date{\vspace{-5ex}}
@@ -33,15 +34,17 @@
 
 \begin{document}
 
+\emptyfooter
 \import{sections/}{title-pages.tex}
 
-\pagestyle{fancy}
-\addtolength{\headwidth}{1.6cm}
-
+\numberedfooter
 \subfile{sections/tree/tree.tex}
 \subfile{sections/graph/graph.tex}
 \subfile{sections/dijkstra/dijkstra.tex}
 
 \import{sections/}{summary.tex}
+
+\emptyfooter
+\import{sections/}{back-cover.tex}
 
 \end{document}

@@ -1,0 +1,18 @@
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\addtolength{\headwidth}{1.6cm}
+
+\renewcommand{\headrulewidth}{0pt}
+
+\setlength{\footskip}{50pt}
+
+\newcommand{\numberedfooter}{
+    \fancyfoot[R]{{
+        \small \dijkstratitle \hspace{1.5em}
+        {\vrule width 0.6pt height 10pt} \hspace{0.4em}
+        \bfseries\thepage
+    }}
+}
+
+\newcommand{\emptyfooter}{\fancyhf{}}
