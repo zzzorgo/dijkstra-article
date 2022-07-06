@@ -39,11 +39,11 @@ const a = {
     children: [b, f],
 };
 
-const treeRoot = a;
+const rootNode = a;
 
 function traverseTree() {
     let currentNode = null;
-    const nextNodes = [treeRoot];
+    const nextNodes = [rootNode];
 
     while (nextNodes.length !== 0) {
         currentNode = nextNodes.pop();

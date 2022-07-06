@@ -9,18 +9,18 @@
 
 \subsection{Структура для обхода}
 
-Прежде чем что-то обойти, нужно это "что-то" иметь. На этом этапе нам нужна структура данных, которая представляет дерево. Наверняка существует миллион разных способов представить древовидную структура, но наша цель – сделать это максимально просто и наглядно.
+Прежде чем что-то обойти, нужно это "что-то" иметь. На этом этапе нам нужна структура данных, которая представляет дерево. Наверняка существует миллион разных способов представить древовидную структуру, но наша цель – сделать это максимально просто и наглядно.
 
-Пусть все дерево состоит из набора элементов типа {\firacodebold Node}, а корневой элемент лежит в переменной {\firacodebold treeRoot}.
+Пусть все дерево состоит из набора элементов типа {\firacodebold Node}, а корневой элемент лежит в переменной {\firacodebold rootNode}.
 % \begin{strip}
     \begin{ruledelement}
-        \begin{lstlisting}[label={lst:treeStructure}]
+        \begin{lstlisting}[caption={Структура элемента дерева}, label={lst:treeStructure}]
 interface Node {
     id: string;
     children: Node[];
 }
 
-const treeRoot: Node = // ...
+const rootNode: Node = // ...
         \end{lstlisting}
     \end{ruledelement}
 % \end{strip}
@@ -29,26 +29,26 @@ const treeRoot: Node = // ...
 
 \begin{figure}
     \styledgraph{
-        treeRoot -- { / -- { / , / -- / }, / -- / -- { / , / }}
+        rootNode -- { / -- { / , / -- / }, / -- / -- { / , / }}
     }
     \caption{Пример дерева}
     \label{fig:exampleTree}
 \end{figure}
 
-Теперь, когда у нас есть структура данных для хранения дерева и корень дерева в переменной {\firacodebold treeRoot}, мы можем приступить непосредственно к обходу.
+Теперь, когда у нас есть структура данных для хранения дерева и корень дерева в переменной {\firacodebold rootNode}, мы можем приступить непосредственно к обходу.
 
 Надо сказать, что оба способа обхода, которые мы рассмотрим, очень похожи и буквально отличаются одной строчкой. Разница между ними заключается в том, в каком порядке будет происходить обход. Поэтому от того, какой именно алгоритм был выбран, может зависеть только то, как быстро мы найдем нужный элемент.
 
 \begin{figure*}
     \lstset{
-        emph={traverseTree},
+        emph={traverseTree, pop},
         emphstyle=\textbf,
     }
     \begin{ruledelement}
         \begin{lstlisting}[caption={Обход дерева в глубину}, label={lst:treeDfs}]
 function traverseTree() {
     let currentNode = null;
-    const nextNodes = [treeRoot]; (*\label{code:treeDfs:stackInit}*)
+    const nextNodes = [rootNode]; (*\label{code:treeDfs:stackInit}*)
 
     while (nextNodes.length !== 0) { (*\label{code:treeDfs:loop}*)
         currentNode = nextNodes.pop(); (*\label{code:treeDfs:stackPop}*)
@@ -77,24 +77,24 @@ function traverseTree() {
 
 \subsection{Обход в глубину}
 
-Обход происходит последовательно, в каждой итерации обхода мы исследуем ровно один элемент. Вопрос только в том, откуда мы его берем? Ну что ж, первый элемент у нас уже есть – это {\firacodebold treeRoot}, или корень дерева. Исследовав его, мы можем начать исследовать всех его потомков, а затем потомков этих потомков и так далее, пока не найдем требуемый элемент или не переберем все элементы.
+Обход происходит последовательно, в каждой итерации обхода мы исследуем ровно один элемент. Вопрос только в том, откуда мы его берем? Ну что ж, первый элемент у нас уже есть – это {\firacodebold rootNode}, или корень дерева. Исследовав его, мы можем начать исследовать всех его потомков, а затем потомков этих потомков и так далее, пока не найдем требуемый элемент или не переберем все элементы.
 
 Именно этот алгоритм и записан в листинге \ref{lst:treeDfs}. До начала выполнения основного цикла на строке \ref{code:treeDfs:loop} мы инициализируем массив {\firacodebold nextNodes} (строка \ref{code:treeDfs:stackInit}). Туда мы будем класть все элементы, которые мы хотим обойти. На данный момент у нас есть только корень дерева, его и кладем. Строго говоря, {\firacodebold nextNodes} в данном примере исполняет роль не столько массива, сколько {\firacodebold стека}.
 
-Войдя в цикл, первым делом мы достаем верхний элемент стека (строка \ref{code:treeDfs:stackPop}) и кладем его в переменную {\firacodebold currentNode}. На этом этапе это {\firacodebold treeRoot}. Сразу после этого проверяем, не является ли {\firacodebold currentNode} целевым элементом (строка \ref{code:treeDfs:checkForTarget}). В нашем случае целевой элемент тот, у которого поле {\firacodebold data} равно строке {\firacodebold 'h'}.
+Войдя в цикл, первым делом мы достаем верхний элемент стека (строка \ref{code:treeDfs:stackPop}) и кладем его в переменную {\firacodebold currentNode}. На этом этапе это {\firacodebold rootNode}. Сразу после этого проверяем, не является ли {\firacodebold currentNode} целевым элементом (строка \ref{code:treeDfs:checkForTarget}). В нашем случае целевой элемент тот, у которого поле {\firacodebold id} равно строке {\firacodebold 'h'}.
 
 Если это действительно целевой элемент – выходим из цикла и функции, обход завершен, целевой элемент найден.
 
 \begin{figure*}
     \lstset{
-        emph={shift},
+        emph={traverseTree, shift},
         emphstyle=\textbf,
     }
     \begin{ruledelement}
         \begin{lstlisting}[caption={Обход дерева в ширину}, label={lst:treeBfs}]
 function traverseTree() {
     let currentNode = null;
-    const nextNodes = [treeRoot];
+    const nextNodes = [rootNode];
 
     while (nextNodes.length !== 0) {
         currentNode = nextNodes.shift(); (*\label{code:treeBfs:stackPop}*)
@@ -122,7 +122,7 @@ function traverseTree() {
     \label{fig:treeBfsOrder}
 \end{figure}
 
-Если же нет, то добавляем на стек всех потомков текущего элемента {\firacodebold currentNode} (на данный момент это потомки {\firacodebold treeRoot}) и заходим на новую итерацию. Снова достаем верхний элемент из {\firacodebold nextNodes} и повторяем итерации до тех пор, пока не найдем целевой элемент или не обойдем все дерево.
+Если же нет, то добавляем в стек всех потомков текущего элемента {\firacodebold currentNode} (на данный момент это потомки {\firacodebold rootNode}) и заходим на новую итерацию. Снова достаем верхний элемент из {\firacodebold nextNodes} и повторяем итерации до тех пор, пока не найдем целевой элемент или не обойдем все дерево.
 
 Если мы обойдем все дерево, так и не найдя целевой элемент, тогда в какой-то момент список {\firacodebold nextNodes} опустеет, и мы выйдем из функции на строке \ref{code:treeDfs:notFound}.
 
@@ -138,45 +138,45 @@ function traverseTree() {
 Наверняка вам сейчас захотелось попробовать этот код самим, и это отличная идея. Правда, помимо функции обхода дерева, нужно еще и само дерево, формирование которого может быть утомительным. Поэтому ниже в листинге \ref{lst:treeJson} приведен пример дерева, которое можно скопировать к себе в код. Его структура соответствует той, что на рисунке \ref{fig:treeBfsOrder}.
 
 \begin{ruledelement}
-    \begin{lstlisting}[caption={Пример {\firacodebold treeRoot}}, label={lst:treeJson}]
+    \begin{lstlisting}[caption={Пример {\firacodebold rootNode}}, label={lst:treeJson}]
 const i = {
-    data: 'i',
+    id: 'i',
     children: [],
 };
 const h = {
-    data: 'h',
+    id: 'h',
     children: [],
 };
 const e = {
-    data: 'e',
+    id: 'e',
     children: [],
 };
 const g = {
-    data: 'g',
+    id: 'g',
     children: [h, i],
 };
 const d = {
-    data: 'd',
+    id: 'd',
     children: [e],
 };
 const c = {
-    data: 'c',
+    id: 'c',
     children: [],
 };
 const f = {
-    data: 'f',
+    id: 'f',
     children: [g],
 };
 const b = {
-    data: 'b',
+    id: 'b',
     children: [c, d],
 };
 const a = {
-    data: 'a',
+    id: 'a',
     children: [b, f],
 };
 
-const treeRoot = a;
+const rootNode = a;
     \end{lstlisting}
 \end{ruledelement}
 
